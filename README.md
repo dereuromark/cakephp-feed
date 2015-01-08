@@ -4,6 +4,7 @@
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.png)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.png)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
+[![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-feed/badge.png)](https://coveralls.io/r/dereuromark/cakephp-feed)
 
 A CakePHP 3.x Plugin containing a RssView class to generate RSS feeds.
 
