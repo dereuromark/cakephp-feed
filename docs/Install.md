@@ -30,7 +30,7 @@ or
 Plugin::loadAll(...);
 ```
 
-In case you want the Feed bootstrap file included (recommended), you can do that in your `ROOT/Config/bootstrap.php` with
+In case you want the Feed bootstrap file included (recommended), you can do that in your `ROOT/config/bootstrap.php` with
 
 ```php
 Plugin::load('Feed', array('bootstrap' => true));
