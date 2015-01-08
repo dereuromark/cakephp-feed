@@ -21,13 +21,13 @@ You can then access it via:
 We then need an action to output our feed.
 You can enable the RSS view class it in your actions like so:
 ```php
-$this->viewClass = 'Tools.Rss';
+$this->viewClass = 'Feed.Rss';
 ```
 
 The nicer way would be to use extensions-routing and let CakePHP auto-switch to this view class.
 See the documentation on how to use view class mapping to automatically respond with the RssView for each request to the rss extension:
 
-    'rss' => 'Tools.Rss'
+    'rss' => 'Feed.Rss'
 
 With the help of parseExtensions() and RequestHandler this will save you the extra view config line in your actions.
 
@@ -55,7 +55,7 @@ A basic feed contains at least a title, description and a link for both channel 
 It is also advised to add the `atom:link` to the location of the feed itself.
 
 ```php
-$this->viewClass = 'Tools.Rss'; // Important if you do not have an auto-switch for the rss extension
+$this->viewClass = 'Feed.Rss'; // Important if you do not have an auto-switch for the rss extension
 $atomLink = array('controller' => 'Topics', 'action' => 'feed', '_ext' => 'rss'); // Example controller and action
 $data = array(
     'channel' => array(
