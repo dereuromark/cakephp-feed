@@ -13,7 +13,7 @@
 App::uses('Controller', 'Controller');
 App::uses('CakeRequest', 'Network');
 App::uses('CakeResponse', 'Network');
-App::uses('RssView', 'Tools.View');
+App::uses('RssView', 'Feed.View');
 
 /**
  * RssViewTest
