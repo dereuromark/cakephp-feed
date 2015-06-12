@@ -14,7 +14,7 @@ This branch only works for **CakePHP3.x** - please use the [Tools plugin version
 **It is still dev** (not even alpha), please be careful with using it.
 
 ## What is this plugin for?
-There is a core Rss helper, but it has several defencies.
+There is a core Rss helper, but it has several deficiencies.
 
 ### Goals of this view class
 
@@ -24,7 +24,7 @@ There is a core Rss helper, but it has several defencies.
 - Support CDATA (unescaped content).
 
 ### Additional features
-- Automatic View class mapping via rss extension.
+- Automatic View class mapping via `rss` extension.
 
 See [my article](http://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp/) for details on the history of this view class.
 
