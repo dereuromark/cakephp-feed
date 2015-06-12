@@ -30,8 +30,5 @@
 	"support":{
 		"source": "https://github.com/dereuromark/cakephp-feed",
 		"issues": "https://github.com/dereuromark/cakephp-feed/issues"
-	},
-	"extra": {
-		"installer-name": "Feed"
 	}
 }
