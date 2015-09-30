@@ -60,22 +60,22 @@ class RssViewTest extends TestCase {
 	public function testSerialize() {
 		$Request = new Request();
 		$Response = new Response();
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
 				'description' => 'Channel description'
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => 'http://example.org/one',
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => 'http://example.org/one',
 					'author' => 'one@example.org', 'description' => 'Content one',
-					'source' => array('url' => 'http://foo.bar')),
-				array('title' => 'Title Two', 'link' => 'http://example.org/two',
+					'source' => ['url' => 'http://foo.bar']],
+				['title' => 'Title Two', 'link' => 'http://example.org/two',
 					'author' => 'two@example.org', 'description' => 'Content two',
-					'source' => array('url' => 'http://foo.bar', 'content' => 'Foo bar')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -118,23 +118,23 @@ RSS;
 		$Response = new Response();
 
 		$time = time();
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
 				'description' => 'Channel description',
 				'sy:updatePeriod' => 'hourly',
 				'sy:updateFrequency' => 1
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => 'http://example.org/one',
-					'dc:creator' => 'Author One', 'pubDate' => $time),
-				array('title' => 'Title Two', 'link' => 'http://example.org/two',
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => 'http://example.org/one',
+					'dc:creator' => 'Author One', 'pubDate' => $time],
+				['title' => 'Title Two', 'link' => 'http://example.org/two',
 					'dc:creator' => 'Author Two', 'pubDate' => $time,
-					'source' => 'http://foo.bar'),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+					'source' => 'http://foo.bar'],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -179,15 +179,15 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'foo:bar' => 'something',
-			),
-			'items' => array(
-				array('title' => 'Title Two'),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+			],
+			'items' => [
+				['title' => 'Title Two'],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 	}
@@ -204,19 +204,19 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
-				'atom:link' => array('@href' => array('controller' => 'foo', 'action' => 'bar')),
+				'atom:link' => ['@href' => ['controller' => 'foo', 'action' => 'bar']],
 				'description' => 'Channel description',
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content one'),
-				array('title' => 'Title Two', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content two'),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content one'],
+				['title' => 'Title Two', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content two'],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -256,21 +256,21 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
-				'guid' => array('url' => 'http://channel.example.org', '@isPermaLink' => 'true'),
-				'atom:link' => array('@href' => array('controller' => 'foo', 'action' => 'bar')),
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content one',
-					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one'),
-				array('title' => 'Title Two', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content two',
-					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+				'guid' => ['url' => 'http://channel.example.org', '@isPermaLink' => 'true'],
+				'atom:link' => ['@href' => ['controller' => 'foo', 'action' => 'bar']],
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content one',
+					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one'],
+				['title' => 'Title Two', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content two',
+					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -312,22 +312,22 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'document' => array(
-				'namespace' => array(
+		$data = [
+			'document' => [
+				'namespace' => [
 					'admin' => 'http://webns.net/mvcb/',
 					'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-				)
-			),
-			'channel' => array(
+				]
+			],
+			'channel' => [
 				'title' => 'Channel title',
-				'admin:errorReportsTo' => array('@rdf:resource' => 'mailto:me@example.com')
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+				'admin:errorReportsTo' => ['@rdf:resource' => 'mailto:me@example.com']
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -360,21 +360,21 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$url = array('controller' => 'topics', 'action' => 'feed', '_ext' => 'rss');
-		$data = array(
-			'channel' => array(
+		$url = ['controller' => 'topics', 'action' => 'feed', '_ext' => 'rss'];
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
-				'guid' => array('url' => $url, '@isPermaLink' => 'true'),
-				'image' => array(
+				'guid' => ['url' => $url, '@isPermaLink' => 'true'],
+				'image' => [
 					'url' => '/img/logo_rss.png',
 					'link' => '/'
-				)
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+				]
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -411,21 +411,21 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
 				'category' => 'IT/Internet/Web development & more',
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content one',
-					'category' => 'Internet'),
-				array('title' => 'Title Two', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content two',
-					'category' => array('News', 'Tutorial'),
-					'comments' => array('controller' => 'foo', 'action' => 'bar', '_ext' => 'rss')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content one',
+					'category' => 'Internet'],
+				['title' => 'Title Two', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content two',
+					'category' => ['News', 'Tutorial'],
+					'comments' => ['controller' => 'foo', 'action' => 'bar', '_ext' => 'rss']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -467,17 +467,17 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content one',
-					'enclosure' => array('url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content one',
+					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -510,17 +510,17 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title',
 				'link' => 'http://channel.example.org',
-			),
-			'items' => array(
-				array('title' => 'Title One', 'link' => array('controller' => 'foo', 'action' => 'bar'), 'description' => 'Content one',
-					'foo' => array('@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv')),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+			],
+			'items' => [
+				['title' => 'Title One', 'link' => ['controller' => 'foo', 'action' => 'bar'], 'description' => 'Content one',
+					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv']],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
@@ -553,19 +553,19 @@ RSS;
 		$Request = new Request();
 		$Response = new Response();
 
-		$data = array(
-			'channel' => array(
+		$data = [
+			'channel' => [
 				'title' => 'Channel title with äöü umlauts and <!> special chars',
 				'link' => 'http://channel.example.org',
-			),
-			'items' => array(
-				array(
+			],
+			'items' => [
+				[
 					'title' => 'A <unsafe title',
-					'link' => array('controller' => 'foo', 'action' => 'bar'),
-					'description' => 'My content "&" and <other> stuff here should also be escaped safely'),
-			)
-		);
-		$viewVars = array('channel' => $data, '_serialize' => 'channel');
+					'link' => ['controller' => 'foo', 'action' => 'bar'],
+					'description' => 'My content "&" and <other> stuff here should also be escaped safely'],
+			]
+		];
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render(false);
 
