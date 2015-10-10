@@ -40,6 +40,8 @@ Cake\Core\Configure::write('debug', true);
 
 mb_internal_encoding('UTF-8');
 
+date_default_timezone_set('UTC');
+
 $Tmp = new Cake\Filesystem\Folder(TMP);
 $Tmp->create(TMP . 'cache/models', 0770);
 $Tmp->create(TMP . 'cache/persistent', 0770);
