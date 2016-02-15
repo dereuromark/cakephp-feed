@@ -30,5 +30,8 @@
 	"support":{
 		"source": "https://github.com/dereuromark/cakephp-feed",
 		"issues": "https://github.com/dereuromark/cakephp-feed/issues"
+	},
+	"require-dev": {
+		"fig-r/psr2r-sniffer": "dev-master"
 	}
 }

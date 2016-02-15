@@ -83,7 +83,10 @@ class RssView extends View {
 	/**
 	 * Constructor
 	 *
-	 * @param Controller $controller
+	 * @param \Cake\Network\Request $request
+	 * @param \Cake\Network\Response $response
+	 * @param \Cake\Event\EventManager $eventManager
+	 * @param array $viewOptions
 	 */
 	public function __construct(Request $request = null, Response $response = null,
 		EventManager $eventManager = null, array $viewOptions = []) {
@@ -130,7 +133,7 @@ class RssView extends View {
 	/**
 	 * Converts a time in any format to an RSS time
 	 *
-	 * @param int|string|DateTime $time
+	 * @param int|string|\DateTime $time
 	 * @return string An RSS-formatted timestamp
 	 * @see Time::toRssString()
 	 */
@@ -159,8 +162,8 @@ class RssView extends View {
 	 * XML responses very easy. You can omit the '_serialize' parameter,
 	 * and use a normal view + layout as well.
 	 *
-	 * @param string $view The view being rendered.
-	 * @param string $layout The layout being rendered.
+	 * @param string|null $view The view being rendered.
+	 * @param string|null $layout The layout being rendered.
 	 * @return string The rendered view.
 	 */
 	public function render($view = null, $layout = null) {
@@ -177,7 +180,7 @@ class RssView extends View {
 	 *
 	 * @param string|array $serialize The viewVars that need to be serialized.
 	 * @return string The serialized data
-	 * @throws RuntimeException When the prefix is not specified
+	 * @throws \RuntimeException When the prefix is not specified
 	 */
 	protected function _serialize($serialize) {
 		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'channel';

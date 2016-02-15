@@ -20,7 +20,6 @@ use Feed\View\RssView;
 
 /**
  * RssViewTest
- *
  */
 class RssViewTest extends TestCase {
 
