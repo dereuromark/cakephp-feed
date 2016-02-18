@@ -135,7 +135,7 @@ class RssView extends View {
 	 *
 	 * @param int|string|\DateTime $time
 	 * @return string An RSS-formatted timestamp
-	 * @see Time::toRssString()
+	 * @see \Cake\I18n\Time::toRssString()
 	 */
 	public function time($time) {
 		$time = new Time($time);
