@@ -11,10 +11,10 @@
  */
 namespace Feed\Test\TestCase\View;
 
-use Cake\Routing\Router;
 use Cake\Controller\Controller;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Feed\View\RssView;
 
