@@ -587,4 +587,65 @@ RSS;
 		$this->assertTextEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testMedia() {
+		$Request = new Request();
+		$Response = new Response();
+
+		$data = [
+			'document' => [
+				'namespace' => [
+					'media' => 'http://search.yahoo.com/mrss/'
+				]
+			],
+			'channel' => [
+				'title' => 'Channel title',
+			],
+			'items' => [
+				[
+					'media:restriction' => ['@type' => 'sharing', '@relationship' => 'deny'],
+					'media:content' => [
+						'@url' => 'http://some/img.ext',
+						'@isPermaLink' => 'true',
+						'@type' => 'video/quicktime'
+					],
+					'media:group' => [
+						'media:content' => [
+							'@url' => 'http://some/other-img.ext',
+							'@isPermaLink' => 'true',
+							'@type' => 'video/quicktime',
+							'@fileSize' => 999
+						],
+					]
+				],
+			]
+		];
+
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$result = $View->render(false);
+
+		$expected = <<<RSS
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>Channel title</title>
+    <link>/</link>
+    <description/>
+    <item>
+      <media:restriction type="sharing" relationship="deny"/>
+      <media:content url="http://some/img.ext" isPermaLink="true" type="video/quicktime"/>
+      <media:group>
+        <media:content url="http://some/other-img.ext" isPermaLink="true" type="video/quicktime" fileSize="999"/>
+      </media:group>
+    </item>
+  </channel>
+</rss>
+
+RSS;
+		$this->assertTextEquals($expected, $result);
+	}
+
 }
