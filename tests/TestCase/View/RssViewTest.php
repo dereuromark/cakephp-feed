@@ -659,14 +659,14 @@ RSS;
 			],
 			'items' => [
 				[
-					'guid'=>['url' => 'Testing', '@isPermalink' => "false"],
+					'guid' => ['url' => 'Testing', '@isPermalink' => 'false'],
 				],
 				[
-					'guid'=>['url' => 'Testing', '@isPermalink' => "true"],
+					'guid' => ['url' => 'Testing', '@isPermalink' => 'true'],
 				],
 				[
-					'guid'=>['url' => 'Testing'],
-				]
+					'guid' => ['url' => 'Testing'],
+				],
 			]
 		];
 
