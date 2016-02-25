@@ -1,5 +1,4 @@
 <?php
-namespace Feed\Test\App\Config;
 
 use Cake\Routing\Router;
 

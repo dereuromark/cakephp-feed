@@ -9,6 +9,7 @@
  * @author        Mark Scherer
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Feed\Test\TestCase\View;
 
 use Cake\Controller\Controller;
