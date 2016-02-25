@@ -21,7 +21,7 @@ You can then access it via:
 We then need an action to output our feed.
 You can enable the RSS view class it in your actions like so:
 ```php
-$this->viewClass = 'Feed.Rss';
+$this->viewBuilder()->className('Feed.Rss');
 ```
 
 The nicer way would be to use extensions-routing and let CakePHP auto-switch to this view class.
@@ -75,8 +75,8 @@ $this->set(array('data' => $data, '_serialize' => 'data'));
 ```
 
 ### Built in namespaces
-It is also possible to use one of the already built in namespaces – e.g. if you want to display
-a post’s username instead of email (which you should^^). You can also add the content itself
+It is also possible to use one of the already built in namespaces â€“ e.g. if you want to display
+a postâ€™s username instead of email (which you should^^). You can also add the content itself
 as CDATA. The description needs to be plain text, so if you have HTML markup, make sure to
 strip that out for the description but pass it unescaped to the content namespace tag for it.
 ```php
