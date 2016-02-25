@@ -649,4 +649,52 @@ RSS;
 		$this->assertTextEquals($expected, $result);
 	}
 
+	public function testIsPermalink() {
+		$Request = new Request();
+		$Response = new Response();
+
+		$data = [
+			'channel' => [
+				'title' => 'Channel title',
+			],
+			'items' => [
+				[
+					'guid' => ['url' => 'Testing', '@isPermalink' => 'false'],
+				],
+				[
+					'guid' => ['url' => 'Testing', '@isPermalink' => 'true'],
+				],
+				[
+					'guid' => ['url' => 'Testing'],
+				],
+			]
+		];
+
+		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$result = $View->render(false);
+
+		$expected = <<<RSS
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Channel title</title>
+    <link>/</link>
+    <description/>
+    <item>
+      <guid isPermalink="false">Testing</guid>
+    </item>
+    <item>
+      <guid isPermalink="true">/Testing</guid>
+    </item>
+    <item>
+      <guid>/Testing</guid>
+    </item>
+  </channel>
+</rss>
+
+RSS;
+		$this->assertTextEquals($expected, $result);
+	}
+
 }
