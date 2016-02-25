@@ -107,7 +107,7 @@ $data = array(
         'namespace' => array(
             'g' => 'http://base.google.com/ns/1.0'
         )
-    )
+    ),
     'channel' => array(
         ...
     ),
