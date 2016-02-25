@@ -310,7 +310,7 @@ class RssView extends View {
 						}
 						$val = $attrib;
 					} elseif (is_array($val) && isset($val['url'])) {
-						if (!isset($val['@isPermalink']) || $val['@isPermalink'] === "true") {
+						if (!isset($val['@isPermalink']) || $val['@isPermalink'] !== 'false') {
 							$val['url'] = Router::url($val['url'], true);
 						}
 						if ($bareKey === 'guid') {

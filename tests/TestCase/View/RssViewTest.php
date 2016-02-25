@@ -696,4 +696,5 @@ RSS;
 RSS;
 		$this->assertTextEquals($expected, $result);
 	}
+
 }
