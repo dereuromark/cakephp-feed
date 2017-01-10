@@ -11,6 +11,7 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 use Cake\View\View;
+use RuntimeException;
 
 /**
  * A view class that is used for creating RSS feeds.
@@ -84,13 +85,14 @@ class RssView extends View {
 	/**
 	 * Constructor
 	 *
-	 * @param \Cake\Network\Request $request
-	 * @param \Cake\Network\Response $response
-	 * @param \Cake\Event\EventManager $eventManager
+	 * @param \Cake\Network\Request|null $request
+	 * @param \Cake\Network\Response|null $response
+	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
 	public function __construct(Request $request = null, Response $response = null,
-		EventManager $eventManager = null, array $viewOptions = []) {
+		EventManager $eventManager = null, array $viewOptions = []
+	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
 		if ($response && $response instanceof Response) {
@@ -227,7 +229,7 @@ class RssView extends View {
 		$namespaces = [];
 		foreach ($this->_usedNamespaces as $usedNamespacePrefix) {
 			if (!isset($this->_namespaces[$usedNamespacePrefix])) {
-				throw new \RuntimeException(sprintf('The prefix %s is not specified.', $usedNamespacePrefix));
+				throw new RuntimeException(sprintf('The prefix %s is not specified.', $usedNamespacePrefix));
 			}
 			$namespaces['xmlns:' . $usedNamespacePrefix] = $this->_namespaces[$usedNamespacePrefix];
 		}

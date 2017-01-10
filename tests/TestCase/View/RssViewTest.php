@@ -12,7 +12,6 @@
 
 namespace Feed\Test\TestCase\View;
 
-use Cake\Controller\Controller;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
@@ -24,8 +23,14 @@ use Feed\View\RssView;
  */
 class RssViewTest extends TestCase {
 
+	/**
+	 * @var \Feed\View\RssView
+	 */
 	public $Rss;
 
+	/**
+	 * @var string
+	 */
 	public $baseUrl;
 
 	/**
@@ -172,7 +177,7 @@ RSS;
 	/**
 	 * RssViewTest::testSerializeWithUnconfiguredPrefix()
 	 *
-	 * @expectedException RuntimeException
+	 * @expectedException \RuntimeException
 	 * @return void
 	 */
 	public function testSerializeWithUnconfiguredPrefix() {
