@@ -4,19 +4,8 @@
 Installing the Plugin is pretty much as with every other CakePHP Plugin.
 
 ```
-composer require dereuromark/cakephp-feed:dev-master
+composer require dereuromark/cakephp-feed
 ```
-
-or manually via
-
-```
-"require": {
-	"dereuromark/cakephp-feed": "dev-master"
-}
-```
-and
-
-	composer update
 
 Details @ https://packagist.org/packages/dereuromark/cakephp-feed
 
@@ -42,4 +31,3 @@ Plugin::loadAll([
 		'Feed' => ['bootstrap' => true]
 ]);
 ```
-
