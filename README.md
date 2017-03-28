@@ -27,6 +27,10 @@ There is a core helper for RSS generation, but it has several deficiencies.
 
 See [my article](http://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp/) for details on the history of this view class.
 
+### Demo
+http://sandbox.dereuromark.de/sandbox/feed-examples
+
+
 ## Installation & Docs
 
 - [Documentation](docs/README.md)
