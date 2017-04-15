@@ -86,7 +86,7 @@ class RssView extends View {
 	 * Constructor
 	 *
 	 * @param \Cake\Network\Request|null $request
-	 * @param \Cake\Network\Response|null $response
+	 * @param \Cake\Http\Response|null $response
 	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
