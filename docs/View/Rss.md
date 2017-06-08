@@ -38,7 +38,7 @@ variable as the XML response.
 
 In your controller, you could do the following:
 ```php
-$this->set(array('posts' => $posts, '_serialize' => 'posts'));
+$this->set(['posts' => $posts, '_serialize' => 'posts']);
 ```
 When the view is rendered, the `$posts` view variable will be serialized
 into the RSS XML.
@@ -55,23 +55,31 @@ A basic feed contains at least a title, description and a link for both channel 
 It is also advised to add the `atom:link` to the location of the feed itself.
 
 ```php
-$this->viewClass = 'Feed.Rss'; // Important if you do not have an auto-switch for the rss extension
-$atomLink = array('controller' => 'Topics', 'action' => 'feed', '_ext' => 'rss'); // Example controller and action
-$data = array(
-    'channel' => array(
+$this->viewBuilder()->className('Feed.Rss'); // Important if you do not have an auto-switch for the rss extension
+$atomLink = ['controller' => 'Topics', 'action' => 'feed', '_ext' => 'rss']; // Example controller and action
+$data = [
+    'channel' => [
         'title' => 'Channel title',
         'link' => 'http://channel.example.org',
         'description' => 'Channel description',
-        'atom:link' => array('@href' => $atomLink),
-    ),
-    'items' => array(
-        array('title' => 'Title One', 'link' => 'http://example.org/one',
-            'author' => 'one@example.org', 'description' => 'Content one'),
-        array('title' => 'Title Two', 'link' => 'http://example.org/two',
-            'author' => 'two@example.org', 'description' => 'Content two'),
-    ));
-);
-$this->set(array('data' => $data, '_serialize' => 'data'));
+        'atom:link' => ['@href' => $atomLink]
+    ],
+    'items' => [
+        [
+            'title' => 'Title One',
+            'link' => 'http://example.org/one',
+            'author' => 'one@example.org',
+            'description' => 'Content one'
+        ],
+        [
+            'title' => 'Title Two',
+            'link' => 'http://example.org/two',
+            'author' => 'two@example.org',
+            'description' => 'Content two'
+        ]
+    ]
+];
+$this->set(['data' => $data, '_serialize' => 'data']);
 ```
 
 ### Built in namespaces
@@ -80,42 +88,50 @@ a post’s username instead of email (which you should^^). You can also add the 
 as CDATA. The description needs to be plain text, so if you have HTML markup, make sure to
 strip that out for the description but pass it unescaped to the content namespace tag for it.
 ```php
-$data = array(
-    'channel' => array(
+$data = [
+    'channel' => [
         'title' => 'Channel title',
         'link' => 'http://channel.example.org',
         'description' => 'Channel description'
-    ),
-    'items' => array(
-        array('title' => 'Title One', 'link' => 'http://example.org/one',
-            'dc:creator' => 'Mr Bean', 'description' => 'Content one',
-            'content:encoded' => 'Some <b>HTML</b> content'),
-        array('title' => 'Title Two', 'link' => 'http://example.org/two',
-            'dc:creator' => 'Luke Skywalker', 'description' => 'Content two',
-            'content:encoded' => 'Some <b>more HTML</b> content'),
-    )
-);
-$this->set(array('data' => $data, '_serialize' => 'data'));
+    ],
+    'items' => [
+        [
+            'title' => 'Title One',
+            'link' => 'http://example.org/one',
+            'dc:creator' => 'Mr Bean',
+            'description' => 'Content one',
+            'content:encoded' => 'Some <b>HTML</b> content'
+        ],
+        [
+            'title' => 'Title Two',
+            'link' => 'http://example.org/two',
+            'dc:creator' => 'Luke Skywalker',
+            'description' => 'Content two',
+            'content:encoded' => 'Some <b>more HTML</b> content'
+        ],
+    ]
+];
+$this->set(['data' => $data, '_serialize' => 'data']);
 ```
 
 ### Custom namespaces
 You can easily register new namespaces, e.g. to support the google data feeds (`xmlns:g="http://base.google.com/ns/1.0"`):
 
 ```php
-$data = array(
-    'document' => array(
-        'namespace' => array(
+$data = [
+    'document' => [
+        'namespace' => [
             'g' => 'http://base.google.com/ns/1.0'
-        )
-    ),
-    'channel' => array(
+        ]
+    ],
+    'channel' => [
         ...
-    ),
-    'items' => array(
-        array('g:price' => 25, ...),
-    )
-);
-$this->set(array('data' => $data, '_serialize' => 'data'));
+    ],
+    'items' => [
+        ['g:price' => 25, ...],
+    ]
+];
+$this->set(['data' => $data, '_serialize' => 'data']);
 ```
 
 ### Passing params.
