@@ -16,6 +16,9 @@
 		"php": ">=5.4",
 		"cakephp/cakephp": "~3.0"
 	},
+	"require-dev": {
+		"fig-r/psr2r-sniffer": "dev-master"
+	},
 	"autoload": {
 		"psr-4": {
 			"Feed\\": "src"
@@ -31,7 +34,11 @@
 		"source": "https://github.com/dereuromark/cakephp-feed",
 		"issues": "https://github.com/dereuromark/cakephp-feed/issues"
 	},
-	"require-dev": {
-		"fig-r/psr2r-sniffer": "dev-master"
+	"scripts": {
+		"test": "php phpunit.phar",
+		"test-coverage" : "php phpunit.phar --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
+		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-5.7.20.phar && mv phpunit-5.7.20.phar phpunit.phar || true",
+		"cs-check": "phpcs -p --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-feed/vendor/,/tmp/,/logs/ --extensions=php ./",
+		"cs-fix": "phpcbf -v --standard=vendor/fig-r/psr2r-sniffer/PSR2R/ruleset.xml --ignore=/cakephp-feed/vendor/,/tmp/,/logs/ --extensions=php ./"
 	}
 }
