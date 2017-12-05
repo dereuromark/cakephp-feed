@@ -14,6 +14,7 @@ This branch only works for **CakePHP 3.x** - please use the 2.x branch for CakeP
 
 ## What is this plugin for?
 There is a core helper for RSS generation, but it has several deficiencies.
+So this plugin aims to provide a better support for feed generation.
 
 ### Goals of this view class
 
