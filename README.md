@@ -1,7 +1,7 @@
 # CakePHP Feed Plugin
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-feed.svg)](https://travis-ci.org/dereuromark/cakephp-feed)
-[![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-feed/badge.svg)](https://coveralls.io/r/dereuromark/cakephp-feed)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
+[![Coverage Status](https://codecov.io/gh/dereuromark/cakephp-feed/branch/master/graph/badge.svg)](https://codecov.io/gh/dereuromark/cakephp-feed)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
