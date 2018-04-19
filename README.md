@@ -6,6 +6,8 @@
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.png)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.png)](https://packagist.org/packages/dereuromark/cakephp-feed)
 
+NOTE: With 4.x development already being started, **this 2.x branch is now in maintenance mode**. No active development is done anymore on it, mainly only necessary bugfixes.
+
 ## What is this plugin for?
 There is a core Rss helper, but it has several deficiencies.
 
