@@ -1,5 +1,7 @@
 <?php
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+	define('DS', DIRECTORY_SEPARATOR);
+}
 if (!defined('WINDOWS')) {
 	if (DS == '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
 		define('WINDOWS', true);
@@ -61,7 +63,7 @@ $cache = [
 	]
 ];
 
-Cake\Cache\Cache::config($cache);
+Cake\Cache\Cache::setConfig($cache);
 
 Cake\Core\Plugin::load('Feed', ['path' => ROOT . DS, 'bootstrap' => true]);
 
@@ -72,7 +74,7 @@ if (!getenv('db_class')) {
 }
 
 if (WINDOWS) {
-	Cake\Datasource\ConnectionManager::config('test', [
+	Cake\Datasource\ConnectionManager::setConfig('test', [
 		'className' => 'Cake\Database\Connection',
 		'driver' => 'Cake\Database\Driver\Mysql',
 		'database' => 'cake_test',
@@ -85,7 +87,7 @@ if (WINDOWS) {
 	return;
 }
 
-Cake\Datasource\ConnectionManager::config('test', [
+Cake\Datasource\ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class'),
 	'dsn' => getenv('db_dsn'),
