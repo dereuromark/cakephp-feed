@@ -90,13 +90,13 @@ class RssView extends View {
 	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
-	public function __construct(Request $request = null, Response $response = null,
+	public function __construct(Request $request = null, Response &$response = null,
 		EventManager $eventManager = null, array $viewOptions = []
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
 		if ($response && $response instanceof Response) {
-			$response->type('rss');
+			$response = $response->withType('rss');
 		}
 	}
 
