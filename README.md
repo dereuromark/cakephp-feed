@@ -10,7 +10,7 @@ A CakePHP 3.x Plugin containing a RssView class to generate RSS feeds.
 
 ## Version notice
 
-This branch only works for **CakePHP 3.5+** - please use the 2.x branch for CakePHP 2.x.
+This branch only works for **CakePHP 3.5.5+** - please use the 2.x branch for CakePHP 2.x.
 
 ## What is this plugin for?
 There is a core helper for RSS generation, but it has several deficiencies.
