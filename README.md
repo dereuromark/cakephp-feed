@@ -1,7 +1,7 @@
 # CakePHP Feed Plugin
 [![Build Status](https://api.travis-ci.org/dereuromark/cakephp-feed.svg)](https://travis-ci.org/dereuromark/cakephp-feed)
 [![Coverage Status](https://codecov.io/gh/dereuromark/cakephp-feed/branch/master/graph/badge.svg)](https://codecov.io/gh/dereuromark/cakephp-feed)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
@@ -26,10 +26,10 @@ So this plugin aims to provide a better support for feed generation.
 ### Additional features
 - Automatic View class mapping via `rss` extension.
 
-See [my article](http://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp/) for details on the history of this view class.
+See [my article](https://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp/) for details on the history of this view class.
 
 ### Demo
-http://sandbox.dereuromark.de/sandbox/feed-examples
+https://sandbox.dereuromark.de/sandbox/feed-examples
 
 
 ## Installation & Docs

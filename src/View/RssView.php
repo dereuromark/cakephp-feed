@@ -37,7 +37,7 @@ use RuntimeException;
  *
  * @author Mark Scherer
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
- * @link http://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp
+ * @link https://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp
  */
 class RssView extends View {
 
