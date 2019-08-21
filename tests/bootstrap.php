@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
@@ -14,19 +15,20 @@ define('ROOT', dirname(__DIR__));
 define('TMP', ROOT . DS . 'tmp' . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
-define('APP', sys_get_temp_dir());
+define('APP', ROOT . DS . 'tests' . DS . 'test_app' . DS . 'src' . DS);
 define('APP_DIR', 'src');
 define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . APP_DIR . DS);
 
 define('WWW_ROOT', ROOT . DS . 'webroot' . DS);
-define('CONFIG', dirname(__FILE__) . DS . 'config' . DS);
+define('CONFIG', __DIR__ . DS . 'config' . DS);
+define('TESTS', __DIR__ . DS);
 
 ini_set('intl.default_locale', 'de-DE');
 
-require ROOT . '/vendor/cakephp/cakephp/src/basics.php';
 require ROOT . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
 
 Cake\Core\Configure::write('App', [
 		'namespace' => 'App',
@@ -65,7 +67,7 @@ $cache = [
 
 Cake\Cache\Cache::setConfig($cache);
 
-Cake\Core\Plugin::load('Feed', ['path' => ROOT . DS, 'bootstrap' => true]);
+Cake\Core\Plugin::getCollection()->add(new Feed\Plugin());
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {

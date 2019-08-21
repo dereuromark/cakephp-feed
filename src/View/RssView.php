@@ -4,9 +4,9 @@ namespace Feed\View;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
@@ -85,12 +85,12 @@ class RssView extends View {
 	/**
 	 * Constructor
 	 *
-	 * @param \Cake\Network\Request|null $request
+	 * @param \Cake\Http\ServerRequest|null $request
 	 * @param \Cake\Http\Response|null $response
 	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
-	public function __construct(Request $request = null, Response &$response = null,
+	public function __construct(ServerRequest $request = null, Response &$response = null,
 		EventManager $eventManager = null, array $viewOptions = []
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
@@ -148,13 +148,16 @@ class RssView extends View {
 	/**
 	 * Skip loading helpers if this is a _serialize based view.
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function loadHelpers() {
 		if (isset($this->viewVars['_serialize'])) {
-			return;
+			return $this;
 		}
+
 		parent::loadHelpers();
+
+		return $this;
 	}
 
 	/**
@@ -247,8 +250,6 @@ class RssView extends View {
 	}
 
 	/**
-	 * RssView::_prepareOutput()
-	 *
 	 * @param array $item
 	 * @return array
 	 */
@@ -365,8 +366,6 @@ class RssView extends View {
 	}
 
 	/**
-	 * RssView::_newCdata()
-	 *
 	 * @param string $content
 	 * @return string
 	 */
@@ -377,8 +376,6 @@ class RssView extends View {
 	}
 
 	/**
-	 * RssView::_replaceCdata()
-	 *
 	 * @param string $content
 	 * @return string
 	 */

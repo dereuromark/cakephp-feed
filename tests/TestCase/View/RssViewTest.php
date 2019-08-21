@@ -34,8 +34,6 @@ class RssViewTest extends TestCase {
 	public $baseUrl;
 
 	/**
-	 * RssViewTest::setUp()
-	 *
 	 * @return void
 	 */
 	public function setUp() {
@@ -175,8 +173,6 @@ RSS;
 	}
 
 	/**
-	 * RssViewTest::testSerializeWithUnconfiguredPrefix()
-	 *
 	 * @expectedException \RuntimeException
 	 * @return void
 	 */
@@ -247,7 +243,6 @@ $expected = <<<RSS
 </rss>
 
 RSS;
-		//debug($result);
 		$this->assertSame('application/rss+xml', $Response->type());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -304,7 +299,6 @@ RSS;
 </rss>
 
 RSS;
-		//debug($output);
 		$this->assertTextEquals($expected, $result);
 	}
 
@@ -352,7 +346,6 @@ RSS;
 </rss>
 
 RSS;
-		//debug($result);
 		$this->assertTextEquals($expected, $result);
 	}
 

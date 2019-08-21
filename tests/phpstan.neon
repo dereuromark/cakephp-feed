@@ -1,0 +1,6 @@
+parameters:
+	autoload_files:
+		- tests/bootstrap.php
+
+	ignoreErrors:
+		- '#Parameter \#2 \$layout of method Cake\\View\\View::render\(\) expects string|null, false given.#'
