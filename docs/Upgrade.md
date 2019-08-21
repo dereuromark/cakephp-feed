@@ -1,18 +1,12 @@
 # Upgrade Guide
 
-## Upgrading from 2.x or 3.0 to 3.1
-
-```php
-$this->viewClass = 'Feed.Rss';
-```
-is now
+## Upgrading from 3.x
 
 ```php
 $this->viewBuilder()->className('Feed.Rss');
 ```
+is now
 
-Coming from 2.x the ext key in URLs is now _ext:
 ```php
-[..., '_ext' => 'rss']
+$this->viewBuilder()->setClassName('Feed.Rss');
 ```
-In case you want to build URLs linking to the feed from your templates.

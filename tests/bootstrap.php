@@ -1,10 +1,12 @@
 <?php
 
+use Cake\Routing\Route\DashedRoute;
+
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 if (!defined('WINDOWS')) {
-	if (DS == '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
+	if (DS === '\\' || substr(PHP_OS, 0, 3) === 'WIN') {
 		define('WINDOWS', true);
 	} else {
 		define('WINDOWS', false);
@@ -27,12 +29,14 @@ define('TESTS', __DIR__ . DS);
 
 ini_set('intl.default_locale', 'de-DE');
 
-require ROOT . '/vendor/autoload.php';
-require CORE_PATH . 'config/bootstrap.php';
+require_once 'vendor/cakephp/cakephp/src/basics.php';
+require_once 'vendor/autoload.php';
 
 Cake\Core\Configure::write('App', [
 		'namespace' => 'App',
-		'encoding' => 'UTF-8']);
+		'encoding' => 'UTF-8',
+		'fullBaseUrl' => 'http://example.org',
+]);
 Cake\Core\Configure::write('debug', true);
 
 mb_internal_encoding('UTF-8');
@@ -66,6 +70,14 @@ $cache = [
 ];
 
 Cake\Cache\Cache::setConfig($cache);
+
+// Why is this required?
+require ROOT . DS . 'config' . DS . 'bootstrap.php';
+Cake\Routing\Router::defaultRouteClass(DashedRoute::class);
+
+// Why is this needed?
+Cake\Routing\Router::reload();
+require TESTS . 'config' . DS . 'routes.php';
 
 Cake\Core\Plugin::getCollection()->add(new Feed\Plugin());
 

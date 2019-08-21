@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
@@ -12,15 +10,12 @@
 
 namespace Feed\Test\TestCase\View;
 
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Feed\View\RssView;
 
-/**
- * RssViewTest
- */
 class RssViewTest extends TestCase {
 
 	/**
@@ -36,7 +31,7 @@ class RssViewTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->Rss = new RssView();
@@ -61,7 +56,7 @@ class RssViewTest extends TestCase {
 	 * @return void
 	 */
 	public function testSerialize() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 		$data = [
 			'channel' => [
@@ -107,7 +102,7 @@ class RssViewTest extends TestCase {
 </rss>
 
 RSS;
-		$this->assertSame('application/rss+xml', $Response->type());
+		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
 
@@ -117,7 +112,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithPrefixes() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$time = time();
@@ -168,7 +163,7 @@ RSS;
 </rss>
 
 RSS;
-		$this->assertSame('application/rss+xml', $Response->type());
+		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
 
@@ -177,7 +172,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithUnconfiguredPrefix() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -190,7 +185,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$View->render(false);
 	}
 
 	/**
@@ -202,7 +197,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithArrayLinks() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -253,7 +248,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithContent() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -308,7 +303,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithCustomNamespace() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -355,7 +350,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithImage() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$url = ['controller' => 'topics', 'action' => 'feed', '_ext' => 'rss'];
@@ -406,7 +401,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithCategories() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -462,7 +457,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithEnclosure() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -505,7 +500,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithCustomTags() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -548,7 +543,7 @@ RSS;
 	 * @return void
 	 */
 	public function testSerializeWithSpecialChars() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -590,7 +585,7 @@ RSS;
 	 * @return void
 	 */
 	public function testMedia() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -631,7 +626,7 @@ RSS;
 <rss xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
   <channel>
     <title>Channel title</title>
-    <link>/</link>
+    <link>http://example.org/</link>
     <description/>
     <item>
       <media:restriction type="sharing" relationship="deny"/>
@@ -647,8 +642,11 @@ RSS;
 		$this->assertTextEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testIsPermalink() {
-		$Request = new Request();
+		$Request = new ServerRequest();
 		$Response = new Response();
 
 		$data = [
@@ -657,13 +655,13 @@ RSS;
 			],
 			'items' => [
 				[
-					'guid' => ['url' => 'Testing', '@isPermalink' => 'false'],
+					'guid' => ['url' => '/testing', '@isPermalink' => 'false'],
 				],
 				[
-					'guid' => ['url' => 'Testing', '@isPermalink' => 'true'],
+					'guid' => ['url' => '/test-me', '@isPermalink' => 'true'],
 				],
 				[
-					'guid' => ['url' => 'Testing'],
+					'guid' => ['url' => '/test-me-too'],
 				],
 			]
 		];
@@ -677,16 +675,16 @@ RSS;
 <rss version="2.0">
   <channel>
     <title>Channel title</title>
-    <link>/</link>
+    <link>http://example.org/</link>
     <description/>
     <item>
-      <guid isPermalink="false">Testing</guid>
+      <guid isPermalink="false">/testing</guid>
     </item>
     <item>
-      <guid isPermalink="true">/Testing</guid>
+      <guid isPermalink="true">http://example.org/test-me</guid>
     </item>
     <item>
-      <guid>/Testing</guid>
+      <guid>http://example.org/test-me-too</guid>
     </item>
   </channel>
 </rss>
