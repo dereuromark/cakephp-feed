@@ -6,11 +6,11 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-A CakePHP 3.x Plugin containing a RssView class to generate RSS feeds.
+A CakePHP plugin containing a RssView class to generate RSS feeds.
 
 ## Version notice
 
-This branch only works for **CakePHP 3.5.5+** - please use the 2.x branch for CakePHP 2.x.
+This branch is for use with **CakePHP 3.7+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
 
 ## What is this plugin for?
 There is a core helper for RSS generation, but it has several deficiencies.
