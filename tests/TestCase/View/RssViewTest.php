@@ -647,6 +647,9 @@ RSS;
 		$this->assertTextEquals($expected, $result);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function testIsPermalink() {
 		$Request = new Request();
 		$Response = new Response();
