@@ -17,6 +17,7 @@ use Cake\Routing\Router;
 use Cake\Routing\Route\DashedRoute;
 use Cake\TestSuite\TestCase;
 use Feed\View\RssView;
+use RuntimeException;
 
 class RssViewTest extends TestCase {
 
@@ -174,7 +175,6 @@ RSS;
 	}
 
 	/**
-	 * @expectedException \RuntimeException
 	 * @return void
 	 */
 	public function testSerializeWithUnconfiguredPrefix() {
@@ -191,6 +191,9 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+
+		$this->expectException(RuntimeException::class);
+
 		$View->render(false);
 	}
 
