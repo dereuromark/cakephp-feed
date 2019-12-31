@@ -170,7 +170,7 @@ class RssView extends View {
 	 *
 	 * @param string|null $view The view being rendered.
 	 * @param string|null $layout The layout being rendered.
-	 * @return string The rendered view.
+	 * @return string|null The rendered view.
 	 */
 	public function render($view = null, $layout = null) {
 		if (isset($this->viewVars['_serialize'])) {
@@ -179,6 +179,8 @@ class RssView extends View {
 		if ($view !== false && $this->_getViewFileName($view)) {
 			return parent::render($view, false);
 		}
+
+		return null;
 	}
 
 	/**
