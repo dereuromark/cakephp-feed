@@ -65,7 +65,7 @@ class RssView extends View {
 		'atom' => 'http://www.w3.org/2005/Atom',
 		'content' => 'http://purl.org/rss/1.0/modules/content/',
 		'dc' => 'http://purl.org/dc/elements/1.1/',
-		'sy' => 'http://purl.org/rss/1.0/modules/syndication/'
+		'sy' => 'http://purl.org/rss/1.0/modules/syndication/',
 	];
 
 	/**
@@ -179,6 +179,8 @@ class RssView extends View {
 		if ($template !== false && $this->_getTemplateFileName($template)) {
 			return parent::render($template, false);
 		}
+
+		return '';
 	}
 
 	/**
@@ -227,7 +229,7 @@ class RssView extends View {
 			'rss' => [
 				'@version' => $this->version,
 				'channel' => $channel,
-			]
+			],
 		];
 		$namespaces = [];
 		foreach ($this->_usedNamespaces as $usedNamespacePrefix) {
