@@ -2,6 +2,7 @@
 
 A CakePHP view class to quickly output RSS feeds
 - By default template-less
+- Mini-templating included
 - Very customizable regarding namespaces and prefixes
 - Supports CDATA (unescaped content).
 
@@ -29,9 +30,9 @@ See the documentation on how to use view class mapping to automatically respond 
 
     'rss' => 'Feed.Rss'
 
-With the help of parseExtensions() and RequestHandler this will save you the extra view config line in your actions.
+With the help of `parseExtensions()` and RequestHandler this will save you the extra view config line in your actions.
 
-By setting the '_serialize' key in your controller, you can specify a view variable
+By setting the `'_serialize'` key in your controller, you can specify a view variable
 that should be serialized to XML and used as the response for the request.
 This allows you to omit views + layouts, if your just need to emit a single view
 variable as the XML response.
@@ -43,7 +44,7 @@ $this->set(['posts' => $posts, '_serialize' => 'posts']);
 When the view is rendered, the `$posts` view variable will be serialized
 into the RSS XML.
 
-**Note** The view variable you specify must be compatible with Xml::fromArray().
+**Note** The view variable you specify must be compatible with `Xml::fromArray()`.
 
 If you don't use the `_serialize` key, you will need a view. You can use extended
 views to provide layout like functionality. This is currently not yet tested/supported.
@@ -81,6 +82,8 @@ $data = [
 ];
 $this->set(['data' => $data, '_serialize' => 'data']);
 ```
+
+You can use simple array URLs, as the RssView will automatically make all URLs absolute on rendering.
 
 ### Built in namespaces
 It is also possible to use one of the already built in namespaces – e.g. if you want to display
@@ -133,6 +136,48 @@ $data = [
 ];
 $this->set(['data' => $data, '_serialize' => 'data']);
 ```
+
+### Rendering templates
+Sometimes you need to render/process the data using helpers or templating (including elements).
+This is recommended to be done using element rendering - which have also access to all helpers.
+
+For this, create yourself some element, e.g. `templates/element/feed/description.php` to render the description.
+Then add what you need to do:
+```php
+/**
+ * @var \App\View\AppView $this
+ */
+echo $this->Text->autoParagraph($text);
+```
+Then hook this into your controller using `View::render()` functionality:
+
+```php
+$items = [];
+    foreach ($articles as $key => $article) {
+        $text = h($article['content']);
+        $this->viewBuilder()->setVar('text', $text)->disableAutoLayout();
+        $content = $this->createView()->render('/element/feed/element');
+
+        $link = ['action' => 'feedview', $article->id];
+        $guidLink = ['action' => 'view', $article->id];
+
+        $items[] = [
+            'title' => $article->title,
+            'link' => $link,
+            'guid' => [
+                'url' => $guidLink,
+                '@isPermaLink' => 'true',
+            ],
+            'description' => Text::truncate($article->content, 200, ['html' => true]),
+            'dc:creator' => $article->username,
+            'pubDate' => $article->published,
+            'content:encoded' => $content,
+        ];
+    }
+```
+
+Security note: Make sure you used `h()` around text input where necessary to avoid XSS vulnerabilities.
+This can easily be tested using some JS alert snippet and using this as title or description.
 
 ### Passing params.
 If you need to pass params to this view, use query strings:

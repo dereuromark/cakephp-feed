@@ -13,7 +13,7 @@ A CakePHP plugin containing a RssView class to generate RSS feeds.
 This branch is for use with **CakePHP 4.0+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
 
 ## What is this plugin for?
-There is a core helper for RSS generation, but it has several deficiencies.
+There used to be a core helper for RSS generation, but it had several deficiencies. It also was removed in 4.0.
 So this plugin aims to provide a better support for feed generation.
 
 ### Goals of this view class
@@ -22,6 +22,7 @@ So this plugin aims to provide a better support for feed generation.
 - Get rid of the ridiculously verbose "inline" namespace declarations.
 - Simplify the use of namespaces and their prefixes (auto-add only those that are actually used).
 - Support CDATA (unescaped content).
+- Allow mini-templating where necessary.
 
 ### Additional features
 - Automatic View class mapping via `rss` extension.
