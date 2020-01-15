@@ -154,9 +154,9 @@ Then hook this into your controller using `View::render()` functionality:
 ```php
 $items = [];
     foreach ($articles as $key => $article) {
-        $text = h($article['content']);
-        $this->viewBuilder()->setVar('text', $text)->disableAutoLayout();
-        $content = $this->createView()->render('/element/feed/element');
+        $description = h($article->content);
+        $this->viewBuilder()->setVar('text', $description)->disableAutoLayout();
+        $content = $this->createView()->render('/element/feed/description');
 
         $link = ['action' => 'feedview', $article->id];
         $guidLink = ['action' => 'view', $article->id];
@@ -168,9 +168,9 @@ $items = [];
                 'url' => $guidLink,
                 '@isPermaLink' => 'true',
             ],
-            'description' => Text::truncate($article->content, 200, ['html' => true]),
             'dc:creator' => $article->username,
             'pubDate' => $article->published,
+            'description' => Text::truncate($description, 200),
             'content:encoded' => $content,
         ];
     }
