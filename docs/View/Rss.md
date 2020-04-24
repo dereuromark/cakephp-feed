@@ -63,22 +63,22 @@ $data = [
         'title' => 'Channel title',
         'link' => 'http://channel.example.org',
         'description' => 'Channel description',
-        'atom:link' => ['@href' => $atomLink]
+        'atom:link' => ['@href' => $atomLink],
     ],
     'items' => [
         [
             'title' => 'Title One',
             'link' => 'http://example.org/one',
             'author' => 'one@example.org',
-            'description' => 'Content one'
+            'description' => 'Content one',
         ],
         [
             'title' => 'Title Two',
             'link' => 'http://example.org/two',
             'author' => 'two@example.org',
-            'description' => 'Content two'
-        ]
-    ]
+            'description' => 'Content two',
+        ],
+    ],
 ];
 $this->set(['data' => $data, '_serialize' => 'data']);
 ```
@@ -95,7 +95,7 @@ $data = [
     'channel' => [
         'title' => 'Channel title',
         'link' => 'http://channel.example.org',
-        'description' => 'Channel description'
+        'description' => 'Channel description',
     ],
     'items' => [
         [
@@ -103,16 +103,16 @@ $data = [
             'link' => 'http://example.org/one',
             'dc:creator' => 'Mr Bean',
             'description' => 'Content one',
-            'content:encoded' => 'Some <b>HTML</b> content'
+            'content:encoded' => 'Some <b>HTML</b> content',
         ],
         [
             'title' => 'Title Two',
             'link' => 'http://example.org/two',
             'dc:creator' => 'Luke Skywalker',
             'description' => 'Content two',
-            'content:encoded' => 'Some <b>more HTML</b> content'
+            'content:encoded' => 'Some <b>more HTML</b> content',
         ],
-    ]
+    ],
 ];
 $this->set(['data' => $data, '_serialize' => 'data']);
 ```
@@ -124,15 +124,15 @@ You can easily register new namespaces, e.g. to support the google data feeds (`
 $data = [
     'document' => [
         'namespace' => [
-            'g' => 'http://base.google.com/ns/1.0'
-        ]
+            'g' => 'http://base.google.com/ns/1.0',
+        ],
     ],
     'channel' => [
         ...
     ],
     'items' => [
         ['g:price' => 25, ...],
-    ]
+    ],
 ];
 $this->set(['data' => $data, '_serialize' => 'data']);
 ```
