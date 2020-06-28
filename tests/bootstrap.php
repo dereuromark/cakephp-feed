@@ -98,6 +98,7 @@ if (WINDOWS) {
 		'quoteIdentifiers' => true,
 		'cacheMetadata' => true,
 	]);
+
 	return;
 }
 

@@ -90,8 +90,8 @@ class RssView extends View {
 	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
-	public function __construct(ServerRequest $request = null, Response &$response = null,
-		EventManager $eventManager = null, array $viewOptions = []
+	public function __construct(?ServerRequest $request = null, ?Response &$response = null,
+		?EventManager $eventManager = null, array $viewOptions = []
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
@@ -130,18 +130,20 @@ class RssView extends View {
 		}
 
 		$channel = $this->_prepareOutput($channel);
+
 		return $channel;
 	}
 
 	/**
 	 * Converts a time in any format to an RSS time
 	 *
+	 * @see \Cake\I18n\Time::toRssString()
 	 * @param int|string|\DateTime $time
 	 * @return string An RSS-formatted timestamp
-	 * @see \Cake\I18n\Time::toRssString()
 	 */
 	public function time($time) {
 		$time = new Time($time);
+
 		return $time->toRssString();
 	}
 
@@ -187,8 +189,8 @@ class RssView extends View {
 	 * Serialize view vars.
 	 *
 	 * @param string|array $serialize The viewVars that need to be serialized.
-	 * @return string The serialized data
 	 * @throws \RuntimeException When the prefix is not specified
+	 * @return string The serialized data
 	 */
 	protected function _serialize($serialize) {
 		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'channel';
@@ -263,7 +265,7 @@ class RssView extends View {
 
 			// Detect namespaces
 			if (strpos($key, ':') !== false) {
-				list($prefix, $bareKey) = explode(':', $key, 2);
+				[$prefix, $bareKey] = explode(':', $key, 2);
 				if (strpos($prefix, '@') !== false) {
 					$prefix = substr($prefix, 1);
 				}
@@ -276,12 +278,12 @@ class RssView extends View {
 			switch ($bareKey) {
 				case 'encoded':
 					$val = $this->_newCdata($val);
-					break;
 
+					break;
 				case 'pubDate':
 					$val = $this->time($val);
-					break;
 
+					break;
 				case 'category':
 					if (is_array($val) && isset($val['domain'])) {
 						$attrib['@domain'] = $val['domain'];
@@ -300,8 +302,8 @@ class RssView extends View {
 						}
 						$val = $categories;
 					}
-					break;
 
+					break;
 				case 'link':
 				case 'url':
 				case 'guid':
@@ -325,8 +327,8 @@ class RssView extends View {
 					} else {
 						$val = Router::url($val, true);
 					}
-					break;
 
+					break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
 						$attrib['@url'] = Router::url($val['url'], true);
@@ -336,8 +338,8 @@ class RssView extends View {
 						$attrib['@'] = $attrib['@url'];
 					}
 					$val = $attrib;
-					break;
 
+					break;
 				case 'enclosure':
 					if (isset($val['url']) && is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
 						if (!isset($val['length']) && strpos($val['url'], '://') === false) {
@@ -351,8 +353,8 @@ class RssView extends View {
 					$attrib['@length'] = $val['length'];
 					$attrib['@type'] = $val['type'];
 					$val = $attrib;
-					break;
 
+					break;
 				default:
 					//nothing
 			}
@@ -374,6 +376,7 @@ class RssView extends View {
 	protected function _newCdata($content) {
 		$i = count($this->_cdata);
 		$this->_cdata[$i] = $content;
+
 		return '###CDATA-' . $i . '###';
 	}
 
@@ -386,6 +389,7 @@ class RssView extends View {
 			$data = '<![CDATA[' . $data . ']]>';
 			$content = str_replace('###CDATA-' . $n . '###', $data, $content);
 		}
+
 		return $content;
 	}
 

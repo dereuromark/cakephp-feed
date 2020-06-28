@@ -4,17 +4,17 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @author        Mark Scherer
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @author Mark Scherer
+ * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Feed\Test\TestCase\View;
 
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use Cake\Routing\Route\DashedRoute;
 use Cake\TestSuite\TestCase;
 use Feed\View\RssView;
 use RuntimeException;
@@ -72,10 +72,14 @@ class RssViewTest extends TestCase {
 				'description' => 'Channel description',
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => 'http://example.org/one',
+				[
+'title' => 'Title One',
+'link' => 'http://example.org/one',
 					'author' => 'one@example.org', 'description' => 'Content one',
 					'source' => ['url' => 'http://foo.bar']],
-				['title' => 'Title Two', 'link' => 'http://example.org/two',
+				[
+'title' => 'Title Two',
+'link' => 'http://example.org/two',
 					'author' => 'two@example.org', 'description' => 'Content two',
 					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar']],
 			],
@@ -132,9 +136,13 @@ RSS;
 				'sy:updateFrequency' => 1,
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => 'http://example.org/one',
+				[
+'title' => 'Title One',
+'link' => 'http://example.org/one',
 					'dc:creator' => 'Author One', 'pubDate' => $time],
-				['title' => 'Title Two', 'link' => 'http://example.org/two',
+				[
+'title' => 'Title Two',
+'link' => 'http://example.org/two',
 					'dc:creator' => 'Author Two', 'pubDate' => $time,
 					'source' => 'http://foo.bar'],
 			],
@@ -268,9 +276,19 @@ RSS;
 				'atom:link' => ['@href' => ['controller' => 'Foo', 'action' => 'bar']],
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content one',
+				[
+'title' => 'Title One',
+'link' => [
+'controller' => 'Foo',
+'action' => 'bar'],
+'description' => 'Content one',
 					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one'],
-				['title' => 'Title Two', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content two',
+				[
+'title' => 'Title Two',
+'link' => [
+'controller' => 'Foo',
+'action' => 'bar'],
+'description' => 'Content two',
 					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'],
 			],
 		];
@@ -420,7 +438,12 @@ RSS;
 				'category' => 'IT/Internet/Web development & more',
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content one',
+				[
+'title' => 'Title One',
+'link' => [
+'controller' => 'Foo',
+'action' => 'bar'],
+'description' => 'Content one',
 					'category' => 'Internet'],
 				['title' => 'Title Two', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content two',
 					'category' => ['News', 'Tutorial'],
@@ -475,7 +498,12 @@ RSS;
 				'link' => 'http://channel.example.org',
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content one',
+				[
+'title' => 'Title One',
+'link' => [
+'controller' => 'Foo',
+'action' => 'bar'],
+'description' => 'Content one',
 					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv']],
 			],
 		];
@@ -518,7 +546,12 @@ RSS;
 				'link' => 'http://channel.example.org',
 			],
 			'items' => [
-				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content one',
+				[
+'title' => 'Title One',
+'link' => [
+'controller' => 'Foo',
+'action' => 'bar'],
+'description' => 'Content one',
 					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv']],
 			],
 		];
