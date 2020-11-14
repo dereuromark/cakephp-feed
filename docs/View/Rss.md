@@ -30,11 +30,8 @@ See the documentation on how to use view class mapping to automatically respond 
 
     'rss' => 'Feed.Rss'
 
-With the help of `extensions()` and RequestHandler this will save you the extra view config line in your actions:
+With the help of RequestHandler this will save you the extra view config line in your actions:
 ```php
-// In your bootstrap
-Router::extensions([..., 'rss']);
-
 // In your controller (or global AppController)
 $this->loadComponent('RequestHandler', [
    'viewClassMap' => [
