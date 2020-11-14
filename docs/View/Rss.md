@@ -12,9 +12,9 @@ They will only be added to the output if actually needed, when a namespace's pre
 
 By default, a `rss` subdir is being used. If you don't want that, you can set the `public $subDir` to null or any other value you like.
 
-## Usage
+## Setup
 Enable RSS extensions with `Router::extensions(['rss'])` (in your routes or bootstrap file).
-You can then access it via:
+You can then access the feed as:
 ```
 /controller/action.rss
 ```
@@ -30,7 +30,18 @@ See the documentation on how to use view class mapping to automatically respond 
 
     'rss' => 'Feed.Rss'
 
-With the help of `parseExtensions()` and RequestHandler this will save you the extra view config line in your actions.
+With the help of `extensions()` and RequestHandler this will save you the extra view config line in your actions:
+```php
+// In your bootstrap
+Router::extensions([..., 'rss']);
+
+// In your controller (or global AppController)
+$this->loadComponent('RequestHandler', [
+   'viewClassMap' => [
+      'rss' => 'Feed.Rss',
+   ],
+]);
+```
 
 By setting the `'_serialize'` key in your controller, you can specify a view variable
 that should be serialized to XML and used as the response for the request.
