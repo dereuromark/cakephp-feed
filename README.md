@@ -1,5 +1,5 @@
 # CakePHP Feed Plugin
-[![Build Status](https://api.travis-ci.com/dereuromark/cakephp-feed.svg?branch=master)](https://travis-ci.com/dereuromark/cakephp-feed)
+[![CI](https://github.com/dereuromark/cakephp-feed/workflows/CI/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-feed/actions?query=workflow%3ACI+branch%3Amaster)
 [![Coverage Status](https://codecov.io/gh/dereuromark/cakephp-feed/branch/master/graph/badge.svg)](https://codecov.io/gh/dereuromark/cakephp-feed)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
