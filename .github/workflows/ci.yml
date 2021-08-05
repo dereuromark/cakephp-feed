@@ -45,7 +45,7 @@ jobs:
           if ${{ matrix.prefer-lowest == 'prefer-lowest' }}
           then
             composer update --prefer-lowest --prefer-stable
-          elif ${{ matrix.php-version == '8.1' }}
+          elif ${{ matrix.php-version == '8.1.0-dev' }}
           then
             composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-req=php
           else
