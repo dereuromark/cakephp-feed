@@ -86,7 +86,7 @@ class RssViewTest extends TestCase {
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -149,7 +149,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$time = date('r', $time);
 		$expected = <<<RSS
@@ -202,7 +202,7 @@ RSS;
 
 		$this->expectException(RuntimeException::class);
 
-		$View->render(false);
+		$View->render('');
 	}
 
 	/**
@@ -231,7 +231,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 $expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -294,7 +294,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -350,7 +350,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -396,7 +396,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -452,7 +452,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -509,7 +509,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -557,7 +557,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -602,7 +602,7 @@ RSS;
 		];
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -661,7 +661,7 @@ RSS;
 
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
@@ -710,7 +710,7 @@ RSS;
 
 		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
-		$result = $View->render(false);
+		$result = $View->render('');
 
 		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
