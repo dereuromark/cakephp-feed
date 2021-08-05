@@ -178,7 +178,14 @@ class RssView extends View {
 		if (isset($this->viewVars['_serialize'])) {
 			return $this->_serialize($this->viewVars['_serialize']);
 		}
-		if ($template !== false && $this->_getTemplateFileName($template)) {
+
+		/** @var string|false|null $template */
+		if ($template === false) {
+			trigger_error('Using false is deprecated, use empty string instead.', E_USER_DEPRECATED);
+			$template = '';
+		}
+
+		if ($template !== '' && $this->_getTemplateFileName($template)) {
 			return parent::render($template, false);
 		}
 
@@ -248,6 +255,9 @@ class RssView extends View {
 		}
 
 		$output = Xml::fromArray($array, $options)->asXML();
+		if ($output === false) {
+			return '';
+		}
 		$output = $this->_replaceCdata($output);
 
 		return $output;

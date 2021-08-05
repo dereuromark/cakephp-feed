@@ -1,4 +1,9 @@
 parameters:
+	level: 3
+
+	paths:
+		- ./
+
 	bootstrapFiles:
 		- bootstrap.php
 
