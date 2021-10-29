@@ -6,7 +6,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\Time;
+use Cake\I18n\FrozenTime;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
@@ -137,12 +137,12 @@ class RssView extends View {
 	/**
 	 * Converts a time in any format to an RSS time
 	 *
-	 * @see \Cake\I18n\Time::toRssString()
+	 * @see \Cake\I18n\FrozenTime::toRssString()
 	 * @param int|string|\DateTime $time
 	 * @return string An RSS-formatted timestamp
 	 */
 	public function time($time) {
-		$time = new Time($time);
+		$time = new FrozenTime($time);
 
 		return $time->toRssString();
 	}
