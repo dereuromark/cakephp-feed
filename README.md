@@ -1,7 +1,7 @@
 # CakePHP Feed Plugin
 [![CI](https://github.com/dereuromark/cakephp-feed/workflows/CI/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-feed/actions?query=workflow%3ACI+branch%3Amaster)
 [![Coverage Status](https://codecov.io/gh/dereuromark/cakephp-feed/branch/master/graph/badge.svg)](https://codecov.io/gh/dereuromark/cakephp-feed)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.3-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-feed/license.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-feed/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-feed)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
@@ -10,7 +10,7 @@ A CakePHP plugin containing a RssView class to generate RSS feeds.
 
 ## Version notice
 
-This branch is for use with **CakePHP 4.0+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
+This branch is for use with **CakePHP 4.2+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
 
 ## What is this plugin for?
 There used to be a core helper for RSS generation, but it had several deficiencies. It also was removed in 4.0.

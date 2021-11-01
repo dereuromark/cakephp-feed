@@ -58,7 +58,7 @@ class RssView extends View {
 	/**
 	 * Holds usable namespaces.
 	 *
-	 * @var array
+	 * @var array<string, string>
 	 * @link http://validator.w3.org/feed/docs/howto/declare_namespaces.html
 	 */
 	protected $_namespaces = [
@@ -138,7 +138,7 @@ class RssView extends View {
 	 * Converts a time in any format to an RSS time
 	 *
 	 * @see \Cake\I18n\FrozenTime::toRssString()
-	 * @param int|string|\DateTime $time
+	 * @param \DateTime|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
 	public function time($time) {
@@ -195,12 +195,12 @@ class RssView extends View {
 	/**
 	 * Serialize view vars.
 	 *
-	 * @param string|array $serialize The viewVars that need to be serialized.
+	 * @param array|string $serialize The viewVars that need to be serialized.
 	 * @throws \RuntimeException When the prefix is not specified
 	 * @return string The serialized data
 	 */
 	protected function _serialize($serialize) {
-		$rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'channel';
+		$rootNode = $this->viewVars['_rootNode'] ?? 'channel';
 
 		if (is_array($serialize)) {
 			$data = [$rootNode => []];
@@ -211,7 +211,7 @@ class RssView extends View {
 				$data[$rootNode][$alias] = $this->viewVars[$key];
 			}
 		} else {
-			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+			$data = $this->viewVars[$serialize] ?? null;
 			if (is_array($data) && Hash::numeric(array_keys($data))) {
 				$data = [$rootNode => [$serialize => $data]];
 			}
@@ -297,7 +297,7 @@ class RssView extends View {
 				case 'category':
 					if (is_array($val) && isset($val['domain'])) {
 						$attrib['@domain'] = $val['domain'];
-						$attrib['@'] = isset($val['content']) ? $val['content'] : $attrib['@domain'];
+						$attrib['@'] = $val['content'] ?? $attrib['@domain'];
 						$val = $attrib;
 					} elseif (is_array($val) && !empty($val[0])) {
 						$categories = [];
@@ -305,7 +305,7 @@ class RssView extends View {
 							$attrib = [];
 							if (is_array($category) && isset($category['domain'])) {
 								$attrib['@domain'] = $category['domain'];
-								$attrib['@'] = isset($val['content']) ? $val['content'] : $attrib['@domain'];
+								$attrib['@'] = $val['content'] ?? $attrib['@domain'];
 								$category = $attrib;
 							}
 							$categories[] = $category;
@@ -342,7 +342,7 @@ class RssView extends View {
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
 						$attrib['@url'] = Router::url($val['url'], true);
-						$attrib['@'] = isset($val['content']) ? $val['content'] : $attrib['@url'];
+						$attrib['@'] = $val['content'] ?? $attrib['@url'];
 					} elseif (!is_array($val)) {
 						$attrib['@url'] = Router::url($val, true);
 						$attrib['@'] = $attrib['@url'];
