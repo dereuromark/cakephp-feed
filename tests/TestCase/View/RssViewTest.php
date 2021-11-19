@@ -73,13 +73,13 @@ class RssViewTest extends TestCase {
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => 'http://example.org/one',
+			'title' => 'Title One',
+			'link' => 'http://example.org/one',
 					'author' => 'one@example.org', 'description' => 'Content one',
 					'source' => ['url' => 'http://foo.bar']],
 				[
-'title' => 'Title Two',
-'link' => 'http://example.org/two',
+				'title' => 'Title Two',
+				'link' => 'http://example.org/two',
 					'author' => 'two@example.org', 'description' => 'Content two',
 					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar']],
 			],
@@ -137,12 +137,12 @@ RSS;
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => 'http://example.org/one',
+			'title' => 'Title One',
+			'link' => 'http://example.org/one',
 					'dc:creator' => 'Author One', 'pubDate' => $time],
 				[
-'title' => 'Title Two',
-'link' => 'http://example.org/two',
+				'title' => 'Title Two',
+				'link' => 'http://example.org/two',
 					'dc:creator' => 'Author Two', 'pubDate' => $time,
 					'source' => 'http://foo.bar'],
 			],
@@ -233,7 +233,7 @@ RSS;
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$result = $View->render('');
 
-$expected = <<<RSS
+		$expected = <<<RSS
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
@@ -277,18 +277,18 @@ RSS;
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => [
-'controller' => 'Foo',
-'action' => 'bar'],
-'description' => 'Content one',
+			'title' => 'Title One',
+			'link' => [
+			'controller' => 'Foo',
+			'action' => 'bar'],
+			'description' => 'Content one',
 					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one'],
 				[
-'title' => 'Title Two',
-'link' => [
-'controller' => 'Foo',
-'action' => 'bar'],
-'description' => 'Content two',
+				'title' => 'Title Two',
+				'link' => [
+				'controller' => 'Foo',
+				'action' => 'bar'],
+				'description' => 'Content two',
 					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'],
 			],
 		];
@@ -439,11 +439,11 @@ RSS;
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => [
-'controller' => 'Foo',
-'action' => 'bar'],
-'description' => 'Content one',
+			'title' => 'Title One',
+			'link' => [
+			'controller' => 'Foo',
+			'action' => 'bar'],
+			'description' => 'Content one',
 					'category' => 'Internet'],
 				['title' => 'Title Two', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content two',
 					'category' => ['News', 'Tutorial'],
@@ -499,11 +499,11 @@ RSS;
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => [
-'controller' => 'Foo',
-'action' => 'bar'],
-'description' => 'Content one',
+			'title' => 'Title One',
+			'link' => [
+			'controller' => 'Foo',
+			'action' => 'bar'],
+			'description' => 'Content one',
 					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv']],
 			],
 		];
@@ -547,11 +547,11 @@ RSS;
 			],
 			'items' => [
 				[
-'title' => 'Title One',
-'link' => [
-'controller' => 'Foo',
-'action' => 'bar'],
-'description' => 'Content one',
+			'title' => 'Title One',
+			'link' => [
+			'controller' => 'Foo',
+			'action' => 'bar'],
+			'description' => 'Content one',
 					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv']],
 			],
 		];
