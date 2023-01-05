@@ -13,7 +13,6 @@ namespace Feed\Test\TestCase\View;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Route\DashedRoute;
-use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Feed\View\RssView;
@@ -41,9 +40,10 @@ class RssViewTest extends TestCase {
 
 		$this->baseUrl = trim(Router::url('/', true), '/');
 
-		Router::scope('/', function (RouteBuilder $routes) {
-			$routes->fallbacks(DashedRoute::class);
-		});
+		Router::reload();
+		$builder = Router::createRouteBuilder('/');
+		$builder->fallbacks(DashedRoute::class);
+		$builder->connect('/{controller}/{action}/*');
 	}
 
 	/**

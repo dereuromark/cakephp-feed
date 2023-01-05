@@ -1,6 +1,5 @@
 <?php
 
-use Cake\Routing\Route\DashedRoute;
 
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -43,10 +42,16 @@ mb_internal_encoding('UTF-8');
 
 date_default_timezone_set('UTC');
 
-$Tmp = new Cake\Filesystem\Folder(TMP);
-$Tmp->create(TMP . 'cache/models', 0770);
-$Tmp->create(TMP . 'cache/persistent', 0770);
-$Tmp->create(TMP . 'cache/views', 0770);
+$tmpDirs = [
+	TMP . 'cache/models',
+	TMP . 'cache/persistent',
+	TMP . 'cache/views',
+];
+foreach ($tmpDirs as $tmpDir) {
+	if (!is_dir($tmpDir)) {
+		mkdir($tmpDir, 0770, true);
+	}
+}
 
 $cache = [
 	'default' => [
@@ -72,12 +77,12 @@ $cache = [
 Cake\Cache\Cache::setConfig($cache);
 
 // Why is this required?
-require ROOT . DS . 'config' . DS . 'bootstrap.php';
-Cake\Routing\Router::defaultRouteClass(DashedRoute::class);
+//require ROOT . DS . 'config' . DS . 'bootstrap.php';
+//Cake\Routing\Router::defaultRouteClass(DashedRoute::class);
 
 // Why is this needed?
-Cake\Routing\Router::reload();
-require TESTS . 'config' . DS . 'routes.php';
+//Cake\Routing\Router::reload();
+//require TESTS . 'config' . DS . 'routes.php';
 
 Cake\Core\Plugin::getCollection()->add(new Feed\Plugin());
 

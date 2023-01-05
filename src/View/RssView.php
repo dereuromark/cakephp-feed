@@ -6,7 +6,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
@@ -53,7 +53,7 @@ class RssView extends View {
 	 *
 	 * @var string
 	 */
-	public $subDir = 'rss';
+	public string $subDir = 'rss';
 
 	/**
 	 * Holds usable namespaces.
@@ -61,7 +61,7 @@ class RssView extends View {
 	 * @var array<string, string>
 	 * @link http://validator.w3.org/feed/docs/howto/declare_namespaces.html
 	 */
-	protected $_namespaces = [
+	protected array $_namespaces = [
 		'atom' => 'http://www.w3.org/2005/Atom',
 		'content' => 'http://purl.org/rss/1.0/modules/content/',
 		'dc' => 'http://purl.org/dc/elements/1.1/',
@@ -73,14 +73,14 @@ class RssView extends View {
 	 *
 	 * @var array
 	 */
-	protected $_usedNamespaces = [];
+	protected array $_usedNamespaces = [];
 
 	/**
 	 * Holds CDATA placeholders.
 	 *
 	 * @var array
 	 */
-	protected $_cdata = [];
+	protected array $_cdata = [];
 
 	/**
 	 * Constructor
@@ -91,7 +91,7 @@ class RssView extends View {
 	 * @param array $viewOptions
 	 */
 	public function __construct(?ServerRequest $request = null, ?Response &$response = null,
-		?EventManager $eventManager = null, array $viewOptions = []
+		?EventManager $eventManager = null, array $viewOptions = [],
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
@@ -137,12 +137,12 @@ class RssView extends View {
 	/**
 	 * Converts a time in any format to an RSS time
 	 *
-	 * @see \Cake\I18n\FrozenTime::toRssString()
+	 * @see \Cake\I18n\DateTime::toRssString()
 	 * @param \DateTime|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
 	public function time($time) {
-		$time = new FrozenTime($time);
+		$time = new DateTime($time);
 
 		return $time->toRssString();
 	}

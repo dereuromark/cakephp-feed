@@ -1,10 +1,8 @@
 parameters:
-	level: 3
+	level: 8
 
 	paths:
 		- ./
 
 	bootstrapFiles:
 		- bootstrap.php
-
-	ignoreErrors:
