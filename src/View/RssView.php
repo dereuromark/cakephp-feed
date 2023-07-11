@@ -49,9 +49,10 @@ class RssView extends View {
 	public $version = '2.0';
 
 	/**
-	 * The subdirectory. RSS views are always in rss. Currently not in use.
+	 * The subdirectory. RSS views are always in `rss/`. Currently, not in use.
 	 *
 	 * @var string
+	 * @deprecated Will be removed in the next version.
 	 */
 	public $subDir = 'rss';
 
