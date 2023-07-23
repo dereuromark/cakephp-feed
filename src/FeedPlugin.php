@@ -7,5 +7,5 @@ use Cake\Core\BasePlugin;
 /**
  * Plugin for Feed
  */
-class Plugin extends BasePlugin {
+class FeedPlugin extends BasePlugin {
 }

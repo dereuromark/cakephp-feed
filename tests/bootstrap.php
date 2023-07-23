@@ -1,5 +1,10 @@
 <?php
 
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Datasource\ConnectionManager;
+use Feed\FeedPlugin;
 
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -31,12 +36,12 @@ ini_set('intl.default_locale', 'de-DE');
 require_once 'vendor/cakephp/cakephp/src/basics.php';
 require_once 'vendor/autoload.php';
 
-Cake\Core\Configure::write('App', [
+Configure::write('App', [
 		'namespace' => 'App',
 		'encoding' => 'UTF-8',
 		'fullBaseUrl' => 'http://example.org',
 ]);
-Cake\Core\Configure::write('debug', true);
+Configure::write('debug', true);
 
 mb_internal_encoding('UTF-8');
 
@@ -74,7 +79,7 @@ $cache = [
 	],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
+Cache::setConfig($cache);
 
 // Why is this required?
 //require ROOT . DS . 'config' . DS . 'bootstrap.php';
@@ -84,7 +89,7 @@ Cake\Cache\Cache::setConfig($cache);
 //Cake\Routing\Router::reload();
 //require TESTS . 'config' . DS . 'routes.php';
 
-Cake\Core\Plugin::getCollection()->add(new Feed\Plugin());
+Plugin::getCollection()->add(new FeedPlugin());
 
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
@@ -93,7 +98,7 @@ if (!getenv('db_class')) {
 }
 
 if (WINDOWS) {
-	Cake\Datasource\ConnectionManager::setConfig('test', [
+	ConnectionManager::setConfig('test', [
 		'className' => 'Cake\Database\Connection',
 		'driver' => 'Cake\Database\Driver\Mysql',
 		'database' => 'cake_test',
@@ -107,7 +112,7 @@ if (WINDOWS) {
 	return;
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
+ConnectionManager::setConfig('test', [
 	'className' => 'Cake\Database\Connection',
 	'driver' => getenv('db_class'),
 	'dsn' => getenv('db_dsn'),
