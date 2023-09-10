@@ -33,8 +33,9 @@ define('TESTS', __DIR__ . DS);
 
 ini_set('intl.default_locale', 'de-DE');
 
-require_once 'vendor/cakephp/cakephp/src/basics.php';
-require_once 'vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
+require CORE_PATH . 'config/bootstrap.php';
+require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 
 Configure::write('App', [
 		'namespace' => 'App',
