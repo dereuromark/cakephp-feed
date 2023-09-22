@@ -102,6 +102,15 @@ class RssView extends View {
 	}
 
 	/**
+	 * Mime-type this view class renders as.
+	 *
+	 * @return string Either the content type or '' which means no type.
+	 */
+	public static function contentType(): string {
+		return 'application/rss+xml';
+	}
+
+	/**
 	 * If you are using namespaces that are not yet known to the class, you need to globablly
 	 * add them with this method. Namespaces will only be added for actually used prefixes.
 	 *
