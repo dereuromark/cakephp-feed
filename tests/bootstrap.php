@@ -93,9 +93,8 @@ Cache::setConfig($cache);
 Plugin::getCollection()->add(new FeedPlugin());
 
 // Ensure default test connection is defined
-if (!getenv('db_class')) {
-	putenv('db_class=Cake\Database\Driver\Sqlite');
-	putenv('db_dsn=sqlite::memory:');
+if (!getenv('DB_URL')) {
+	putenv('DB_URL=sqlite:///:memory:');
 }
 
 if (WINDOWS) {
@@ -114,9 +113,7 @@ if (WINDOWS) {
 }
 
 ConnectionManager::setConfig('test', [
-	'className' => 'Cake\Database\Connection',
-	'driver' => getenv('db_class'),
-	'dsn' => getenv('db_dsn'),
+	'dsn' => getenv('DB_URL'),
 	'database' => getenv('db_database'),
 	'username' => getenv('db_username'),
 	'password' => getenv('db_password'),
