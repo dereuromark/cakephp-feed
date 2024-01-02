@@ -84,8 +84,10 @@ class RssViewTest extends TestCase {
 					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -147,8 +149,10 @@ RSS;
 					'source' => 'http://foo.bar'],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$time = date('r', $time);
@@ -197,8 +201,10 @@ RSS;
 				['title' => 'Title Two'],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 
 		$this->expectException(RuntimeException::class);
 
@@ -229,8 +235,10 @@ RSS;
 				['title' => 'Title Two', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content two'],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -292,8 +300,10 @@ RSS;
 					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -348,8 +358,10 @@ RSS;
 				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -394,8 +406,10 @@ RSS;
 				['title' => 'Title One', 'link' => ['controller' => 'Foo', 'action' => 'bar']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -450,8 +464,10 @@ RSS;
 					'comments' => ['controller' => 'Foo', 'action' => 'bar', '_ext' => 'rss']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -507,8 +523,10 @@ RSS;
 					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -555,8 +573,10 @@ RSS;
 					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv']],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -600,8 +620,10 @@ RSS;
 					'description' => 'My content "&" and <other> stuff here should also be escaped safely'],
 			],
 		];
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -659,8 +681,10 @@ RSS;
 			],
 		];
 
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -708,8 +732,10 @@ RSS;
 			],
 		];
 
-		$viewVars = ['channel' => $data, '_serialize' => 'channel'];
+		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
 		$result = $View->render('');
 
 		$expected = <<<RSS

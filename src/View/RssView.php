@@ -10,7 +10,7 @@ use Cake\I18n\DateTime;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
-use Cake\View\View;
+use Cake\View\SerializedView;
 use RuntimeException;
 
 /**
@@ -39,7 +39,7 @@ use RuntimeException;
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  * @link https://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp
  */
-class RssView extends View {
+class RssView extends SerializedView {
 
 	/**
 	 * Default spec version of generated RSS.
@@ -91,8 +91,11 @@ class RssView extends View {
 	 * @param \Cake\Event\EventManager|null $eventManager
 	 * @param array $viewOptions
 	 */
-	public function __construct(?ServerRequest $request = null, ?Response &$response = null,
-		?EventManager $eventManager = null, array $viewOptions = [],
+	public function __construct(
+		?ServerRequest $request = null,
+		?Response &$response = null,
+		?EventManager $eventManager = null,
+		array $viewOptions = [],
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
@@ -118,7 +121,7 @@ class RssView extends View {
 	 * @param string $url
 	 * @return void
 	 */
-	public function setNamespace($prefix, $url) {
+	public function setNamespace(string $prefix, string $url): void {
 		$this->_namespaces[$prefix] = $url;
 	}
 
@@ -128,7 +131,7 @@ class RssView extends View {
 	 * @param array $channel
 	 * @return array Channel
 	 */
-	public function channel($channel) {
+	public function channel(array $channel): array {
 		if (!isset($channel['link'])) {
 			$channel['link'] = '/';
 		}
@@ -151,7 +154,7 @@ class RssView extends View {
 	 * @param \DateTime|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
-	public function time($time) {
+	public function time($time): string {
 		$time = new DateTime($time);
 
 		return $time->toRssString();
@@ -173,43 +176,13 @@ class RssView extends View {
 	}
 
 	/**
-	 * Render a RSS view.
-	 *
-	 * Uses the special '_serialize' parameter to convert a set of
-	 * view variables into a XML response. Makes generating simple
-	 * XML responses very easy. You can omit the '_serialize' parameter,
-	 * and use a normal view + layout as well.
-	 *
-	 * @param string|null $template The view being rendered.
-	 * @param string|false|null $layout The layout being rendered.
-	 * @return string The rendered view.
-	 */
-	public function render(?string $template = null, $layout = null): string {
-		if (isset($this->viewVars['_serialize'])) {
-			return $this->_serialize($this->viewVars['_serialize']);
-		}
-
-		/** @var string|false|null $template */
-		if ($template === false) {
-			trigger_error('Using false is deprecated, use empty string instead.', E_USER_DEPRECATED);
-			$template = '';
-		}
-
-		if ($template !== '' && $this->_getTemplateFileName($template)) {
-			return parent::render($template, false);
-		}
-
-		return '';
-	}
-
-	/**
 	 * Serialize view vars.
 	 *
 	 * @param array|string $serialize The viewVars that need to be serialized.
 	 * @throws \RuntimeException When the prefix is not specified
 	 * @return string The serialized data
 	 */
-	protected function _serialize($serialize) {
+	protected function _serialize(array|string $serialize): string {
 		$rootNode = $this->viewVars['_rootNode'] ?? 'channel';
 
 		if (is_array($serialize)) {
@@ -277,16 +250,16 @@ class RssView extends View {
 	 * @param array $item
 	 * @return array
 	 */
-	protected function _prepareOutput($item) {
+	protected function _prepareOutput(array $item): array {
 		foreach ($item as $key => $val) {
 			$prefix = null;
 			// The cast prevents a PHP bug for switch case and false positives with integers
 			$bareKey = (string)$key;
 
 			// Detect namespaces
-			if (strpos($key, ':') !== false) {
+			if (str_contains($key, ':')) {
 				[$prefix, $bareKey] = explode(':', $key, 2);
-				if (strpos($prefix, '@') !== false) {
+				if (str_contains($prefix, '@')) {
 					$prefix = substr($prefix, 1);
 				}
 				if (!in_array($prefix, $this->_usedNamespaces)) {
@@ -362,7 +335,7 @@ class RssView extends View {
 					break;
 				case 'enclosure':
 					if (isset($val['url']) && is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
-						if (!isset($val['length']) && strpos($val['url'], '://') === false) {
+						if (!isset($val['length']) && !str_contains($val['url'], '://')) {
 							$val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
 						}
 						if (!isset($val['type']) && function_exists('mime_content_type')) {
@@ -393,7 +366,7 @@ class RssView extends View {
 	 * @param string $content
 	 * @return string
 	 */
-	protected function _newCdata($content) {
+	protected function _newCdata(string $content): string {
 		$i = count($this->_cdata);
 		$this->_cdata[$i] = $content;
 
@@ -404,7 +377,7 @@ class RssView extends View {
 	 * @param string $content
 	 * @return string
 	 */
-	protected function _replaceCdata($content) {
+	protected function _replaceCdata(string $content): string {
 		foreach ($this->_cdata as $n => $data) {
 			$data = '<![CDATA[' . $data . ']]>';
 			$content = str_replace('###CDATA-' . $n . '###', $data, $content);
