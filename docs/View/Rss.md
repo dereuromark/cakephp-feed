@@ -89,7 +89,8 @@ $data = [
         ],
     ],
 ];
-$this->set(['data' => $data, '_serialize' => 'data']);
+$this->set(['data' => $data]);
+$this->viewBuilder()->setOption('serialize', 'data');
 ```
 
 You can use simple array URLs, as the RssView will automatically make all URLs absolute on rendering.
@@ -123,7 +124,8 @@ $data = [
         ],
     ],
 ];
-$this->set(['data' => $data, '_serialize' => 'data']);
+$this->set(['data' => $data]);
+$this->viewBuilder()->setOption('serialize', 'data');
 ```
 
 ### Custom namespaces
@@ -143,7 +145,8 @@ $data = [
         ['g:price' => 25, ...],
     ],
 ];
-$this->set(['data' => $data, '_serialize' => 'data']);
+$this->set(['data' => $data]);
+$this->viewBuilder()->setOption('serialize', 'data');
 ```
 
 ### Rendering templates

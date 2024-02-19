@@ -161,21 +161,6 @@ class RssView extends SerializedView {
 	}
 
 	/**
-	 * Skip loading helpers if this is a _serialize based view.
-	 *
-	 * @return $this
-	 */
-	public function loadHelpers() {
-		if (isset($this->viewVars['_serialize'])) {
-			return $this;
-		}
-
-		parent::loadHelpers();
-
-		return $this;
-	}
-
-	/**
 	 * Serialize view vars.
 	 *
 	 * @param array|string $serialize The viewVars that need to be serialized.
