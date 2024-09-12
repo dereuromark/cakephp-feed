@@ -41,21 +41,22 @@ With the help of view negotiation it will save you the extra view config line in
 	}
 ```
 
-By setting the `'_serialize'` key in your controller, you can specify a view variable
+By setting the `'serialize'` option in your controller's `viewBuilder()`, you can specify a view variable
 that should be serialized to XML and used as the response for the request.
 This allows you to omit views + layouts, if your just need to emit a single view
 variable as the XML response.
 
 In your controller, you could do the following:
 ```php
-$this->set(['posts' => $posts, '_serialize' => 'posts']);
+$this->set(['posts' => $posts]);
+$this->viewBuilder()->setOption('serialize', 'posts');
 ```
 When the view is rendered, the `$posts` view variable will be serialized
 into the RSS XML.
 
 **Note** The view variable you specify must be compatible with `Xml::fromArray()`.
 
-If you don't use the `_serialize` key, you will need a view. You can use extended
+If you don't use the `serialize` option, you will need a view. You can use extended
 views to provide layout like functionality. This is currently not yet tested/supported.
 
 ## Examples
