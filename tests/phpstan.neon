@@ -4,5 +4,8 @@ parameters:
 	paths:
 		- ./
 
+	dynamicConstantNames:
+			- WINDOWS
+
 	bootstrapFiles:
 		- bootstrap.php

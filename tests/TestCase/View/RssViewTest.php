@@ -115,6 +115,7 @@ class RssViewTest extends TestCase {
 </rss>
 
 RSS;
+		assert($Response !== null);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -182,6 +183,7 @@ RSS;
 </rss>
 
 RSS;
+		assert($Response !== null);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -263,6 +265,7 @@ RSS;
 </rss>
 
 RSS;
+		assert($Response !== null);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
