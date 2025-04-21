@@ -99,7 +99,7 @@ class RssView extends SerializedView {
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response && $response instanceof Response) {
+		if ($response !== null) {
 			$response = $response->withType('rss');
 		}
 	}
