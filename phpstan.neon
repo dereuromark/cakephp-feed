@@ -7,7 +7,6 @@ parameters:
 	bootstrapFiles:
 		- tests/bootstrap.php
 
-	checkMissingIterableValueType: false
-
 	ignoreErrors:
+		- identifier: missingType.iterableValue
 		- '#Call to an undefined method DOMDocument\|SimpleXMLElement::asXML\(\)#'
