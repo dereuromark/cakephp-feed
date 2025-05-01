@@ -11,7 +11,7 @@ A CakePHP plugin containing a RssView class to generate RSS feeds.
 
 ## Version notice
 
-This branch is for use with **CakePHP 5.0+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
+This branch is for use with **CakePHP 5.1+**. See [version map](https://github.com/dereuromark/cakephp-feed/wiki#cakephp-version-map) for details.
 
 ## What is this plugin for?
 There used to be a core helper for RSS generation, but it had several deficiencies. It also was removed in 4.0.
