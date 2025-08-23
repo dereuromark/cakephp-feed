@@ -38,9 +38,9 @@ require CORE_PATH . 'config/bootstrap.php';
 require CAKE_CORE_INCLUDE_PATH . '/src/functions.php';
 
 Configure::write('App', [
-		'namespace' => 'App',
-		'encoding' => 'UTF-8',
-		'fullBaseUrl' => 'http://example.org',
+	'namespace' => 'App',
+	'encoding' => 'UTF-8',
+	'fullBaseUrl' => 'http://example.org',
 ]);
 Configure::write('debug', true);
 

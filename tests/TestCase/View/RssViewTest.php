@@ -73,15 +73,21 @@ class RssViewTest extends TestCase {
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => 'http://example.org/one',
-					'author' => 'one@example.org', 'description' => 'Content one',
-					'source' => ['url' => 'http://foo.bar']],
+					'title' => 'Title One',
+					'link' => 'http://example.org/one',
+					'author' => 'one@example.org',
+					'description' => 'Content one',
+					'source' => ['url' => 'http://foo.bar'],
+
+				],
 				[
-				'title' => 'Title Two',
-				'link' => 'http://example.org/two',
-					'author' => 'two@example.org', 'description' => 'Content two',
-					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar']],
+					'title' => 'Title Two',
+					'link' => 'http://example.org/two',
+					'author' => 'two@example.org',
+					'description' => 'Content two',
+					'source' => ['url' => 'http://foo.bar', 'content' => 'Foo bar'],
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -140,14 +146,20 @@ RSS;
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => 'http://example.org/one',
-					'dc:creator' => 'Author One', 'pubDate' => $time],
+					'title' => 'Title One',
+					'link' => 'http://example.org/one',
+					'dc:creator' => 'Author One',
+					'pubDate' => $time,
+
+				],
 				[
-				'title' => 'Title Two',
-				'link' => 'http://example.org/two',
-					'dc:creator' => 'Author Two', 'pubDate' => $time,
-					'source' => 'http://foo.bar'],
+					'title' => 'Title Two',
+					'link' => 'http://example.org/two',
+					'dc:creator' => 'Author Two',
+					'pubDate' => $time,
+					'source' => 'http://foo.bar',
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -288,19 +300,27 @@ RSS;
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => [
-			'controller' => 'Foo',
-			'action' => 'bar'],
-			'description' => 'Content one',
-					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one'],
+					'title' => 'Title One',
+					'link' => [
+						'controller' => 'Foo',
+						'action' => 'bar',
+
+					],
+					'description' => 'Content one',
+					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> one',
+
+				],
 				[
-				'title' => 'Title Two',
-				'link' => [
-				'controller' => 'Foo',
-				'action' => 'bar'],
-				'description' => 'Content two',
-					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two'],
+					'title' => 'Title Two',
+					'link' => [
+						'controller' => 'Foo',
+						'action' => 'bar',
+
+					],
+					'description' => 'Content two',
+					'content:encoded' => 'HTML <img src="http://domain.com/some/link/to/image.jpg"/> <b>content</b> two',
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -456,15 +476,24 @@ RSS;
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => [
-			'controller' => 'Foo',
-			'action' => 'bar'],
-			'description' => 'Content one',
-					'category' => 'Internet'],
-				['title' => 'Title Two', 'link' => ['controller' => 'Foo', 'action' => 'bar'], 'description' => 'Content two',
+					'title' => 'Title One',
+					'link' => [
+						'controller' => 'Foo',
+						'action' => 'bar',
+
+					],
+					'description' => 'Content one',
+					'category' => 'Internet',
+
+				],
+				[
+					'title' => 'Title Two',
+					'link' => ['controller' => 'Foo', 'action' => 'bar'],
+					'description' => 'Content two',
 					'category' => ['News', 'Tutorial'],
-					'comments' => ['controller' => 'Foo', 'action' => 'bar', '_ext' => 'rss']],
+					'comments' => ['controller' => 'Foo', 'action' => 'bar', '_ext' => 'rss'],
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -518,12 +547,16 @@ RSS;
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => [
-			'controller' => 'Foo',
-			'action' => 'bar'],
-			'description' => 'Content one',
-					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv']],
+					'title' => 'Title One',
+					'link' => [
+						'controller' => 'Foo',
+						'action' => 'bar',
+
+					],
+					'description' => 'Content one',
+					'enclosure' => ['url' => 'http://www.example.com/media/3d.wmv', 'length' => 78645, 'type' => 'video/wmv'],
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -568,12 +601,16 @@ RSS;
 			],
 			'items' => [
 				[
-			'title' => 'Title One',
-			'link' => [
-			'controller' => 'Foo',
-			'action' => 'bar'],
-			'description' => 'Content one',
-					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv']],
+					'title' => 'Title One',
+					'link' => [
+						'controller' => 'Foo',
+						'action' => 'bar',
+
+					],
+					'description' => 'Content one',
+					'foo' => ['@url' => 'http://www.example.com/media/3d.wmv', '@length' => 78645, '@type' => 'video/wmv'],
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
@@ -620,7 +657,9 @@ RSS;
 				[
 					'title' => 'A <unsafe title',
 					'link' => ['controller' => 'Foo', 'action' => 'bar'],
-					'description' => 'My content "&" and <other> stuff here should also be escaped safely'],
+					'description' => 'My content "&" and <other> stuff here should also be escaped safely',
+
+				],
 			],
 		];
 		$viewVars = ['channel' => $data];
