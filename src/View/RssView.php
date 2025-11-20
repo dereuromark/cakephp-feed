@@ -153,7 +153,7 @@ class RssView extends SerializedView {
 	 * Converts a time in any format to an RSS time
 	 *
 	 * @see \Cake\I18n\DateTime::toRssString()
-	 * @param \DateTime|string|int $time
+	 * @param \Cake\I18n\DateTime|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
 	public function time(DateTime|string|int $time): string {
