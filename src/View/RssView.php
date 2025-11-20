@@ -46,13 +46,15 @@ class RssView extends SerializedView {
 	 *
 	 * @var string
 	 */
-	public $version = '2.0';
+	public string $version = '2.0';
 
 	/**
-	 * The subdirectory. RSS views are always in `rss/`. Currently, not in use.
+	 * The subdirectory. RSS views are always in `rss/`.
+	 * This property is deprecated and will be removed in version 4.0.
+	 * It is currently not used and has no functional impact.
 	 *
 	 * @var string
-	 * @deprecated Will be removed in the next version.
+	 * @deprecated 3.1.0 No longer used. Will be removed in 4.0.
 	 */
 	public string $subDir = 'rss';
 
@@ -154,7 +156,7 @@ class RssView extends SerializedView {
 	 * @param \DateTime|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
-	public function time($time): string {
+	public function time(DateTime|string|int $time): string {
 		$time = new DateTime($time);
 
 		return $time->toRssString();
@@ -252,7 +254,7 @@ class RssView extends SerializedView {
 				}
 			}
 
-			$attrib = null;
+			$attrib = [];
 			switch ($bareKey) {
 				case 'encoded':
 					$val = $this->_newCdata($val);
@@ -273,7 +275,7 @@ class RssView extends SerializedView {
 							$attrib = [];
 							if (is_array($category) && isset($category['domain'])) {
 								$attrib['@domain'] = $category['domain'];
-								$attrib['@'] = $val['content'] ?? $attrib['@domain'];
+								$attrib['@'] = $category['content'] ?? $attrib['@domain'];
 								$category = $attrib;
 							}
 							$categories[] = $category;
@@ -319,17 +321,26 @@ class RssView extends SerializedView {
 
 					break;
 				case 'enclosure':
-					if (isset($val['url']) && is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
-						if (!isset($val['length']) && !str_contains($val['url'], '://')) {
-							$val['length'] = sprintf('%u', filesize(WWW_ROOT . $val['url']));
-						}
-						if (!isset($val['type']) && function_exists('mime_content_type')) {
-							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
+					if (isset($val['url']) && is_string($val['url']) && !str_contains($val['url'], '://')) {
+						$realpath = realpath(WWW_ROOT . $val['url']);
+						$wwwRealPath = realpath(WWW_ROOT);
+
+						if ($realpath && $wwwRealPath && strpos($realpath, $wwwRealPath) === 0 && is_file($realpath)) {
+							if (!isset($val['length'])) {
+								$val['length'] = sprintf('%u', filesize($realpath));
+							}
+							if (!isset($val['type'])) {
+								$finfo = finfo_open(FILEINFO_MIME_TYPE);
+								if ($finfo) {
+									$val['type'] = finfo_file($finfo, $realpath) ?: null;
+									finfo_close($finfo);
+								}
+							}
 						}
 					}
-					$attrib['@url'] = Router::url($val['url'], true);
-					$attrib['@length'] = $val['length'];
-					$attrib['@type'] = $val['type'];
+					$attrib['@url'] = Router::url($val['url'] ?? '', true);
+					$attrib['@length'] = $val['length'] ?? '';
+					$attrib['@type'] = $val['type'] ?? '';
 					$val = $attrib;
 
 					break;
