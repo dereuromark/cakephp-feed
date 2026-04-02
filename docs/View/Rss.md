@@ -10,7 +10,7 @@ A CakePHP view class to quickly output RSS feeds
 With `setNamespace()` you can add namespaces and their definition URLs.
 They will only be added to the output if actually needed, when a namespace's prefix is being used.
 
-By default, a `rss` subdir is being used. If you don't want that, you can set the `public $subDir` to null or any other value you like.
+The `$subDir` property is deprecated and has no functional impact. It will be removed in version 4.0.
 
 ## Setup
 Enable RSS extensions with `Router::extensions(['rss'])` (in your routes or bootstrap file).
@@ -179,7 +179,7 @@ $items = [];
             'link' => $link,
             'guid' => [
                 'url' => $guidLink,
-                '@isPermaLink' => 'true',
+                '@isPermalink' => 'true',
             ],
             'dc:creator' => $article->username,
             'pubDate' => $article->published,
