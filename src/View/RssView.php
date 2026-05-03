@@ -269,7 +269,7 @@ class RssView extends SerializedView {
 						$attrib['@domain'] = $val['domain'];
 						$attrib['@'] = $val['content'] ?? $attrib['@domain'];
 						$val = $attrib;
-					} elseif (is_array($val) && !empty($val[0])) {
+					} elseif (is_array($val) && array_is_list($val)) {
 						$categories = [];
 						foreach ($val as $category) {
 							$attrib = [];
@@ -321,7 +321,12 @@ class RssView extends SerializedView {
 
 					break;
 				case 'enclosure':
-					if (isset($val['url']) && is_string($val['url']) && !str_contains($val['url'], '://')) {
+					if (!is_array($val) || !isset($val['url']) || !is_string($val['url']) || $val['url'] === '') {
+						unset($item[$key]);
+
+						continue 2;
+					}
+					if (!str_contains($val['url'], '://')) {
 						$realpath = realpath(WWW_ROOT . $val['url']);
 						$wwwRealPath = realpath(WWW_ROOT);
 
@@ -338,7 +343,7 @@ class RssView extends SerializedView {
 							}
 						}
 					}
-					$attrib['@url'] = Router::url($val['url'] ?? '', true);
+					$attrib['@url'] = Router::url($val['url'], true);
 					$attrib['@length'] = $val['length'] ?? '';
 					$attrib['@type'] = $val['type'] ?? '';
 					$val = $attrib;
