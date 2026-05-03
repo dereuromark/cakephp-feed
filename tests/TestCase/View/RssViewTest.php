@@ -573,6 +573,88 @@ RSS;
 	}
 
 	/**
+	 * Empty/missing enclosure URL must not produce an `<enclosure>` element with
+	 * an empty `url` attribute (which is invalid per RSS 2.0).
+	 *
+	 * @return void
+	 */
+	public function testSerializeWithEnclosureMissingUrlIsSkipped() {
+		$Request = new ServerRequest();
+		$Response = new Response();
+
+		$data = [
+			'channel' => [
+				'title' => 'Channel title',
+				'link' => 'http://channel.example.org',
+			],
+			'items' => [
+				[
+					'title' => 'Missing url key',
+					'link' => ['controller' => 'Foo', 'action' => 'bar'],
+					'description' => 'No enclosure url at all',
+					'enclosure' => ['length' => 1, 'type' => 'video/wmv'],
+				],
+				[
+					'title' => 'Empty url string',
+					'link' => ['controller' => 'Foo', 'action' => 'bar'],
+					'description' => 'Enclosure url is empty',
+					'enclosure' => ['url' => '', 'length' => 1, 'type' => 'video/wmv'],
+				],
+				[
+					'title' => 'Non-string url',
+					'link' => ['controller' => 'Foo', 'action' => 'bar'],
+					'description' => 'Enclosure url is not a string',
+					'enclosure' => ['url' => null, 'length' => 1, 'type' => 'video/wmv'],
+				],
+			],
+		];
+		$viewVars = ['channel' => $data];
+		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
+		$result = $View->render('');
+
+		$this->assertStringNotContainsString('<enclosure', $result);
+		$this->assertStringNotContainsString('enclosure url=""', $result);
+	}
+
+	/**
+	 * Category passed as a list of values whose first element is falsy
+	 * (`0`, `''`, `null`, `false`) must still render as multiple `<category>`
+	 * elements. Previously the `!empty($val[0])` guard misclassified such lists
+	 * and folded them into a single tag.
+	 *
+	 * @return void
+	 */
+	public function testSerializeWithCategoryListWithFalsyFirstElement() {
+		$Request = new ServerRequest();
+		$Response = new Response();
+
+		$data = [
+			'channel' => [
+				'title' => 'Channel title',
+				'link' => 'http://channel.example.org',
+			],
+			'items' => [
+				[
+					'title' => 'Title One',
+					'link' => ['controller' => 'Foo', 'action' => 'bar'],
+					'description' => 'Content one',
+					'category' => ['0', 'tech'],
+				],
+			],
+		];
+		$viewVars = ['channel' => $data];
+		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$serialize = 'channel';
+		$View->setConfig(compact('serialize'));
+		$result = $View->render('');
+
+		$this->assertStringContainsString('<category>0</category>', $result);
+		$this->assertStringContainsString('<category>tech</category>', $result);
+	}
+
+	/**
 	 * RssViewTest::testSerializeWithCustomTags()
 	 *
 	 * @return void
