@@ -10,6 +10,7 @@ use Cake\I18n\DateTime as CakeDateTime;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
+use Cake\View\Exception\SerializationFailureException;
 use Cake\View\SerializedView;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -217,6 +218,13 @@ class AtomView extends SerializedView {
 			$feed['entry'] = [];
 			foreach ($entries as $entry) {
 				$feed['entry'][] = $this->_prepareEntry($entry);
+			}
+		}
+
+		$this->_assertRequiredFields($feed, ['id', 'title', 'updated'], 'feed');
+		if (!empty($feed['entry'])) {
+			foreach ($feed['entry'] as $index => $entry) {
+				$this->_assertRequiredFields($entry, ['id', 'title', 'updated'], 'entry #' . ($index + 1));
 			}
 		}
 
@@ -490,6 +498,9 @@ class AtomView extends SerializedView {
 		}
 
 		$type = $text['@type'] ?? null;
+		if ($type === 'xhtml') {
+			throw new SerializationFailureException('Atom XHTML text constructs are not supported.');
+		}
 		if ($type === 'html' && isset($text['@']) && is_string($text['@']) && $text['@'] !== '') {
 			$text['@'] = $this->_newCdata($text['@']);
 		}
@@ -563,6 +574,28 @@ class AtomView extends SerializedView {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * @param array<string, mixed> $data
+	 * @param array<int, string> $fields
+	 * @param string $context
+	 * @return void
+	 */
+	protected function _assertRequiredFields(array $data, array $fields, string $context): void {
+		$missing = [];
+		foreach ($fields as $field) {
+			if (!array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '') {
+				$missing[] = $field;
+			}
+		}
+		if ($missing) {
+			throw new SerializationFailureException(sprintf(
+				'Atom %s is missing required field(s): %s',
+				$context,
+				implode(', ', $missing),
+			));
+		}
 	}
 
 }

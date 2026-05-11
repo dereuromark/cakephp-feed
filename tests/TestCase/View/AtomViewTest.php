@@ -95,6 +95,28 @@ class AtomViewTest extends TestCase {
 	}
 
 	/**
+	 * Atom requires `id`, `title`, and `updated` at the feed level. Rendering
+	 * a partial feed would otherwise silently emit invalid XML.
+	 */
+	public function testMissingRequiredFeedFieldsThrow(): void {
+		$View = $this->buildView([
+			'feed' => [
+				'title' => 'Missing required fields',
+			],
+		]);
+
+		$caught = null;
+		try {
+			$View->render('');
+		} catch (SerializationFailureException $e) {
+			$caught = $e->getPrevious();
+		}
+
+		$this->assertInstanceOf(SerializationFailureException::class, $caught);
+		$this->assertStringContainsString('Atom feed is missing required field(s): id, updated', $caught->getMessage());
+	}
+
+	/**
 	 * String shorthand for `link` becomes `<link rel="alternate" href="..."/>`
 	 * — that's the Atom convention. Caller-supplied `@rel` survives.
 	 */
@@ -208,6 +230,42 @@ class AtomViewTest extends TestCase {
 	}
 
 	/**
+	 * XHTML text constructs need nested namespaced markup, which this
+	 * serializer does not currently support. Fail loudly instead of emitting
+	 * invalid escaped text while claiming XHTML support.
+	 */
+	public function testXhtmlContentThrows(): void {
+		$View = $this->buildView([
+			'feed' => [
+				'id' => 'a',
+				'title' => 't',
+				'updated' => '2026-05-11T00:00:00Z',
+				'entries' => [
+					[
+						'id' => 'urn:e:1',
+						'title' => 'Entry',
+						'updated' => '2026-05-11T00:00:00Z',
+						'content' => [
+							'@type' => 'xhtml',
+							'@' => '<div xmlns="http://www.w3.org/1999/xhtml"><p>X</p></div>',
+						],
+					],
+				],
+			],
+		]);
+
+		$caught = null;
+		try {
+			$View->render('');
+		} catch (SerializationFailureException $e) {
+			$caught = $e->getPrevious();
+		}
+
+		$this->assertInstanceOf(SerializationFailureException::class, $caught);
+		$this->assertStringContainsString('Atom XHTML text constructs are not supported.', $caught->getMessage());
+	}
+
+	/**
 	 * Text-typed content (the default) does NOT get CDATA-wrapped — the XML
 	 * encoder takes care of escaping. Avoids needless `<![CDATA[plain text]]>`.
 	 */
@@ -283,6 +341,35 @@ class AtomViewTest extends TestCase {
 
 		$this->assertStringContainsString('<published>2026-05-10T08:00:00+00:00</published>', $out);
 		$this->assertStringContainsString('<updated>2026-05-11T16:00:00+00:00</updated>', $out);
+	}
+
+	/**
+	 * Entries have the same required field set as the feed minus feed-only
+	 * metadata. Missing them should fail instead of producing invalid Atom.
+	 */
+	public function testMissingRequiredEntryFieldsThrow(): void {
+		$View = $this->buildView([
+			'feed' => [
+				'id' => 'a',
+				'title' => 't',
+				'updated' => '2026-05-11T00:00:00Z',
+				'entries' => [
+					[
+						'title' => 'Entry without required fields',
+					],
+				],
+			],
+		]);
+
+		$caught = null;
+		try {
+			$View->render('');
+		} catch (SerializationFailureException $e) {
+			$caught = $e->getPrevious();
+		}
+
+		$this->assertInstanceOf(SerializationFailureException::class, $caught);
+		$this->assertStringContainsString('Atom entry #1 is missing required field(s): id, updated', $caught->getMessage());
 	}
 
 	/**

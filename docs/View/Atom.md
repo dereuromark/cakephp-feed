@@ -95,20 +95,13 @@ Atom distinguishes plain text, HTML, and XHTML. Plain string input becomes `type
 
 The view CDATA-wraps `type="html"` bodies so the markup survives the XML encode.
 
-For XHTML, wrap the body in the required xhtml-namespace `<div>` yourself:
-
-``` php
-'content' => [
-    '@type' => 'xhtml',
-    '@'     => '<div xmlns="http://www.w3.org/1999/xhtml"><p>X</p></div>',
-],
-```
+XHTML text constructs are **not currently supported** by `AtomView`. The serializer only supports plain text and `type="html"` text constructs at the moment; passing `@type => 'xhtml'` raises a `SerializationFailureException` instead of emitting invalid escaped markup.
 
 ### `updated`, `published` — date constructs
 
 Accepts `DateTimeInterface`, an int unix timestamp, or any string `DateTime` can parse. All inputs are normalized to RFC 3339 (`Y-m-d\TH:i:sP`), which is what Atom requires.
 
-`updated` is the last modification time and is **required**. `published` is the original publication time and is optional but strongly recommended — distinguishing the two is one of Atom's main advantages over RSS.
+`updated` is the last modification time and is **required**. `published` is the original publication time and is optional but strongly recommended — distinguishing the two is one of Atom's main advantages over RSS. Missing required fields (`id`, `title`, `updated` on the feed; `id`, `title`, `updated` on each entry) raise a `SerializationFailureException`.
 
 ### `link` — single, multiple, or shorthand
 
