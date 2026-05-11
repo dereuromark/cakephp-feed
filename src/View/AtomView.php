@@ -34,8 +34,10 @@ use RuntimeException;
  * $this->viewBuilder()->setClassName('Feed.Atom');
  * ```
  *
- * Input shape (all keys are optional unless noted; bare strings and
- * structured arrays are accepted interchangeably for convenience):
+ * Input shape — `id`, `title`, `updated` are required at both the feed and
+ * entry level and raise a `SerializationFailureException` when missing.
+ * Other keys are optional. Bare strings and structured arrays are accepted
+ * interchangeably for convenience:
  *
  * ```php
  * $feed = [
@@ -43,8 +45,8 @@ use RuntimeException;
  *     'title' => 'Channel title', // REQUIRED
  *     'updated' => '2026-05-11T12:00:00Z', // REQUIRED — DateTime, string, or int
  *     'subtitle' => 'A short description',
- *     'link' => 'http://example.org/', // or full @href array, or list of links
- *     'author' => 'Jane Doe', // or ['name' => ..., 'email' => ..., 'uri' => ...]
+ *     'link' => 'http://example.org/', // string, @href array, Cake URL array, or list of either
+ *     'author' => 'Jane Doe', // string OR ['name' => ..., 'email' => ..., 'uri' => ...]
  *     'rights' => 'Copyright 2026',
  *     'generator' => 'CakePHP Feed Plugin',
  *     'entries' => [
@@ -52,9 +54,9 @@ use RuntimeException;
  *             'id' => 'http://example.org/posts/1', // REQUIRED
  *             'title' => 'A post', // REQUIRED
  *             'updated' => '2026-05-11', // REQUIRED
- *             'link' => 'http://example.org/posts/1',
- *             'summary' => 'A teaser',
- *             'content' => '<p>HTML body</p>', // shorthand: type=html, CDATA-wrapped
+ *             'link' => 'http://example.org/posts/1', // also accepts Cake URL arrays
+ *             'summary' => 'A teaser', // plain string => type="text" (escaped)
+ *             'content' => '<p>HTML body</p>', // plain string => type="text" (escaped)
  *             'author' => 'Jane',
  *             'published' => '2026-05-10',
  *             'category' => 'tech',
@@ -63,11 +65,21 @@ use RuntimeException;
  * ];
  * ```
  *
+ * Plain-string bodies for text constructs (`title`, `summary`, `content`,
+ * `subtitle`, `rights`) are always treated as `type="text"` and XML-escaped.
+ * To emit `type="html"` with a CDATA-wrapped body, use the array form with
+ * `@type` and `@` keys. `type="xhtml"` is rejected; pre-build the XHTML
+ * subtree at the application layer if you need it.
+ *
  * For full attribute control wrap any field in an array with `@`-prefixed keys
  * for attributes and `@` for the text content, exactly like RssView:
  *
- * - `link`: `['@href' => '/feed', '@rel' => 'self', '@type' => 'application/atom+xml']`
- * - `content`: `['@type' => 'xhtml', '@' => '<div xmlns="http://www.w3.org/1999/xhtml">…</div>']`
+ * - `link` (Atom self-link with explicit attrs):
+ *   `['@href' => '/feed', '@rel' => 'self', '@type' => 'application/atom+xml']`
+ * - `link` (Cake URL array shorthand — passed through `Router::url(..., true)`):
+ *   `['controller' => 'Posts', 'action' => 'feed', '_ext' => 'atom']`
+ * - `content` (HTML — body is CDATA-wrapped automatically):
+ *   `['@type' => 'html', '@' => '<p>HTML body</p>']`
  * - `category`: `['@term' => 'php', '@scheme' => 'http://example.org/tags', '@label' => 'PHP']`
  *
  * @author Mark Scherer
@@ -383,9 +395,15 @@ class AtomView extends SerializedView {
 	/**
 	 * Normalize link input to the Xml::fromArray attribute shape.
 	 *
-	 * Accepts a bare URL string, a single `@href` attribute array, or a list
-	 * of either. Bare strings default to `rel="alternate"`. Caller-supplied
-	 * `@rel` and `@type` are preserved verbatim.
+	 * Accepts:
+	 * - a bare URL string,
+	 * - a single `@href` attribute array,
+	 * - a Cake URL array (associative, e.g.
+	 *   `['controller' => 'Posts', 'action' => 'view', 1]`),
+	 * - a list of any of the above.
+	 *
+	 * Bare strings and Cake URL arrays default to `rel="alternate"`. Caller-
+	 * supplied `@rel` and `@type` survive verbatim.
 	 *
 	 * @param mixed $links
 	 * @return array<int, array<string, mixed>>
@@ -418,9 +436,16 @@ class AtomView extends SerializedView {
 
 			return $link;
 		}
+		if (is_array($link)) {
+			// Cake URL array shape (`['controller' => ..., 'action' => ...]`).
+			// Without this fallback the array would serialize as nested XML
+			// instead of a `<link href="..."/>` attribute element, which is
+			// what RssView already does and what users coming from RssView
+			// expect to keep working.
+			return ['@href' => Router::url($link, true), '@rel' => 'alternate'];
+		}
 
-		/** @var array<string, mixed> $link */
-		return $link;
+		return ['@href' => Router::url((string)$link, true), '@rel' => 'alternate'];
 	}
 
 	/**
@@ -564,13 +589,27 @@ class AtomView extends SerializedView {
 	}
 
 	/**
+	 * Replace the sentinel placeholders inserted by `_newCdata()` with real
+	 * `<![CDATA[...]]>` sections.
+	 *
+	 * The replacement splits any literal `]]>` sequence inside the staged
+	 * payload — a CDATA section cannot contain `]]>`, so naive wrapping
+	 * produces malformed XML whenever the HTML body itself contains that
+	 * three-byte sequence (e.g. an inline JS string or a nested CDATA from
+	 * a paste). The canonical workaround is to close the CDATA early, emit
+	 * the `]]>` as ordinary character data (escaped as `]]&gt;` via a fresh
+	 * CDATA opener), and resume: `]]]]><![CDATA[>` semantically expands to
+	 * `]]` (CDATA) + `>` (CDATA), which round-trips to the original `]]>`
+	 * on parse but never closes the outer section prematurely.
+	 *
 	 * @param string $content
 	 * @return string
 	 */
 	protected function _replaceCdata(string $content): string {
 		foreach ($this->_cdata as $n => $data) {
-			$data = '<![CDATA[' . $data . ']]>';
-			$content = str_replace('###CDATA-' . $n . '###', $data, $content);
+			$safe = str_replace(']]>', ']]]]><![CDATA[>', $data);
+			$wrapped = '<![CDATA[' . $safe . ']]>';
+			$content = str_replace('###CDATA-' . $n . '###', $wrapped, $content);
 		}
 
 		return $content;

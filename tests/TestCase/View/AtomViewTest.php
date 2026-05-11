@@ -266,6 +266,71 @@ class AtomViewTest extends TestCase {
 	}
 
 	/**
+	 * HTML content containing a literal `]]>` sequence must not break CDATA
+	 * wrapping. The canonical workaround is to split the sequence as
+	 * `]]]]><![CDATA[>`, which round-trips to the original `]]>` on parse but
+	 * never closes the outer CDATA section prematurely. Without the split the
+	 * emitted XML would be malformed and any reader would reject the feed.
+	 */
+	public function testHtmlContentSplitsLiteralCdataTerminator(): void {
+		$out = $this->buildView([
+			'feed' => [
+				'id' => 'a',
+				'title' => 't',
+				'updated' => '2026-05-11T00:00:00Z',
+				'entries' => [
+					[
+						'id' => 'urn:e:1',
+						'title' => 'Entry',
+						'updated' => '2026-05-11T00:00:00Z',
+						'content' => [
+							'@type' => 'html',
+							'@' => 'before]]>after',
+						],
+					],
+				],
+			],
+		])->render('');
+
+		// The exact escape sequence per the CDATA-injection workaround.
+		$this->assertStringContainsString('<content type="html"><![CDATA[before]]]]><![CDATA[>after]]></content>', $out);
+
+		// And — more importantly — the result must still round-trip through a
+		// real XML parser. simplexml lets us verify both well-formedness and
+		// that the inner text reads back as the original payload.
+		$doc = simplexml_load_string($out);
+		$this->assertNotFalse($doc, 'feed must remain well-formed XML after the CDATA split');
+		$content = (string)$doc->entry->content;
+		$this->assertSame('before]]>after', $content);
+	}
+
+	/**
+	 * Cake URL arrays (e.g. `['controller' => 'Posts', 'action' => 'view', 1]`)
+	 * are routed through `Router::url(..., true)` just like in RssView,
+	 * instead of falling through and serializing as nested XML children of
+	 * `<link>`. This is the shape most app code already uses with RssView.
+	 */
+	public function testLinkAcceptsCakeUrlArrayShorthand(): void {
+		$out = $this->buildView([
+			'feed' => [
+				'id' => 'a',
+				'title' => 't',
+				'updated' => '2026-05-11T00:00:00Z',
+				'link' => [
+					'controller' => 'Posts',
+					'action' => 'feed',
+					'_ext' => 'atom',
+				],
+			],
+		])->render('');
+
+		$this->assertStringContainsString('href="' . $this->baseUrl . '/posts/feed.atom"', $out);
+		$this->assertStringContainsString('rel="alternate"', $out);
+		$this->assertStringNotContainsString('<controller>', $out);
+		$this->assertStringNotContainsString('<action>', $out);
+	}
+
+	/**
 	 * Text-typed content (the default) does NOT get CDATA-wrapped — the XML
 	 * encoder takes care of escaping. Avoids needless `<![CDATA[plain text]]>`.
 	 */
