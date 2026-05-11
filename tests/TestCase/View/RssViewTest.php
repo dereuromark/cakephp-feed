@@ -619,6 +619,102 @@ RSS;
 	}
 
 	/**
+	 * Caller-supplied @rel / @type on an `atom:link` must not be silently
+	 * overwritten. The view default is `@rel = self`, `@type = application/rss+xml`
+	 * (the typical feed self-reference) but a publisher wiring an
+	 * `atom:link` for the human page passes `@rel = alternate` and
+	 * `@type = text/html` and that used to be clobbered to `self` /
+	 * `application/rss+xml`.
+	 *
+	 * @return void
+	 */
+	public function testAtomLinkPreservesCallerSuppliedRelAndType() {
+		$Request = new ServerRequest();
+		$Response = new Response();
+
+		$data = [
+			'channel' => [
+				'title' => 'Channel title',
+				'link' => 'http://channel.example.org',
+				'atom:link' => [
+					'@href' => ['controller' => 'Foo', 'action' => 'bar'],
+					'@rel' => 'alternate',
+					'@type' => 'text/html',
+				],
+			],
+			'items' => [],
+		];
+		$viewVars = ['channel' => $data];
+		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+		$View->setConfig(['serialize' => 'channel']);
+		$result = $View->render('');
+
+		$this->assertStringContainsString('rel="alternate"', $result);
+		$this->assertStringContainsString('type="text/html"', $result);
+		$this->assertStringNotContainsString('rel="self"', $result);
+		$this->assertStringNotContainsString('type="application/rss+xml"', $result);
+	}
+
+	/**
+	 * Multiple items pointing at the same relative enclosure URL share a single
+	 * disk probe — realpath/filesize/finfo run once and the result is reused.
+	 * The previous code re-ran realpath() + filesize() + finfo_open() per item.
+	 *
+	 * @return void
+	 */
+	public function testEnclosureLocalProbeIsMemoizedAcrossItems() {
+		$Request = new ServerRequest();
+		$Response = new Response();
+
+		if (!is_dir(WWW_ROOT)) {
+			mkdir(WWW_ROOT, 0777, true);
+		}
+		$relative = '/test-enclosure-' . uniqid() . '.bin';
+		$absolute = WWW_ROOT . ltrim($relative, '/');
+		file_put_contents($absolute, str_repeat('x', 1234));
+
+		try {
+			$data = [
+				'channel' => [
+					'title' => 'Channel title',
+					'link' => 'http://channel.example.org',
+				],
+				'items' => [
+					[
+						'title' => 'a',
+						'link' => ['controller' => 'Foo', 'action' => 'bar'],
+						'description' => 'a',
+						'enclosure' => ['url' => $relative],
+					],
+					[
+						'title' => 'b',
+						'link' => ['controller' => 'Foo', 'action' => 'bar'],
+						'description' => 'b',
+						'enclosure' => ['url' => $relative],
+					],
+				],
+			];
+			$viewVars = ['channel' => $data];
+			$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
+			$View->setConfig(['serialize' => 'channel']);
+			$result = $View->render('');
+
+			$this->assertSame(
+				2,
+				substr_count($result, 'length="1234"'),
+				'Both items should have their enclosure length populated from the memoized probe',
+			);
+			$this->assertSame(
+				2,
+				substr_count($result, 'type="text/plain"'),
+				'Both items should have their enclosure type populated from the memoized probe',
+			);
+		} finally {
+			@unlink($absolute);
+		}
+	}
+
+	/**
 	 * Category passed as a list of values whose first element is falsy
 	 * (`0`, `''`, `null`, `false`) must still render as multiple `<category>`
 	 * elements. Previously the `!empty($val[0])` guard misclassified such lists
