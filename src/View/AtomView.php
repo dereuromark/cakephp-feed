@@ -4,7 +4,6 @@ namespace Feed\View;
 
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Http\MimeType;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime as CakeDateTime;
@@ -125,12 +124,16 @@ class AtomView extends SerializedView {
 		?EventManager $eventManager = null,
 		array $viewOptions = [],
 	) {
-		// `atom` is not in Cake's built-in MIME map, so register it idempotently
-		// here via the static facade. The plugin's config/bootstrap.php also
-		// wires this for the route-extension path; doing it in the constructor
-		// keeps AtomView usable even when the plugin bootstrap hasn't been
-		// loaded (e.g. ad-hoc instantiation, integration tests).
-		MimeType::setMimeTypes('atom', 'application/atom+xml');
+		// `atom` is not in Cake's built-in MIME map, so register it
+		// idempotently here. We use the instance method on a throwaway
+		// Response because the underlying type map lives in static state
+		// shared across instances — this works on both Cake 5.1 (where
+		// MimeType isn't a separate class yet) and 5.2+ (where it is).
+		// The plugin's config/bootstrap.php registers the same binding
+		// for route-extension dispatch; doing it here too keeps AtomView
+		// usable when the plugin bootstrap hasn't been loaded (e.g.
+		// ad-hoc instantiation in integration tests).
+		(new Response())->setTypeMap('atom', 'application/atom+xml');
 
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
