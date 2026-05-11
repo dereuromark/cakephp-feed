@@ -1,6 +1,6 @@
 {
 	"name": "dereuromark/cakephp-feed",
-	"description": "A CakePHP plugin containing a RssView to generate RSS feeds.",
+	"description": "A CakePHP plugin containing RssView and AtomView classes for generating RSS 2.0 and Atom 1.0 feeds.",
 	"license": "MIT",
 	"type": "cakephp-plugin",
 	"keywords": [
@@ -8,6 +8,7 @@
 		"plugin",
 		"view",
 		"rss",
+		"atom",
 		"feed"
 	],
 	"authors": [
