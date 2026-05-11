@@ -86,6 +86,18 @@ class RssView extends SerializedView {
 	protected array $_cdata = [];
 
 	/**
+	 * Memoization cache for enclosure stat lookups (per render).
+	 *
+	 * Keyed by the input relative URL string. Each entry is either
+	 *   ['length' => string|null, 'type' => string|null]
+	 * for a resolved local file, or null when the URL did not resolve under
+	 * WWW_ROOT (so callers know to skip without re-running realpath).
+	 *
+	 * @var array<string, array{length: string, type: string|null}|null>
+	 */
+	protected array $_enclosureCache = [];
+
+	/**
 	 * Constructor
 	 *
 	 * @param \Cake\Http\ServerRequest|null $request
@@ -292,8 +304,12 @@ class RssView extends SerializedView {
 						$attrib = $val;
 						$attrib['@href'] = Router::url($val['@href'], true);
 						if ($prefix === 'atom') {
-							$attrib['@rel'] = 'self';
-							$attrib['@type'] = 'application/rss+xml';
+							// Default to the rss-self relation but don't clobber
+							// caller-supplied values. A feed publisher passing
+							// `@rel = alternate` for the human page used to be
+							// silently rewritten to `self`.
+							$attrib['@rel'] ??= 'self';
+							$attrib['@type'] ??= 'application/rss+xml';
 						}
 						$val = $attrib;
 					} elseif (is_array($val) && isset($val['url'])) {
@@ -326,20 +342,21 @@ class RssView extends SerializedView {
 
 						continue 2;
 					}
-					if (!str_contains($val['url'], '://')) {
-						$realpath = realpath(WWW_ROOT . $val['url']);
-						$wwwRealPath = realpath(WWW_ROOT);
-
-						if ($realpath && $wwwRealPath && strpos($realpath, $wwwRealPath) === 0 && is_file($realpath)) {
-							if (!isset($val['length'])) {
-								$val['length'] = sprintf('%u', filesize($realpath));
-							}
-							if (!isset($val['type'])) {
-								$finfo = finfo_open(FILEINFO_MIME_TYPE);
-								if ($finfo) {
-									$val['type'] = finfo_file($finfo, $realpath) ?: null;
-									finfo_close($finfo);
-								}
+					// Skip the disk probe entirely when both length and type are
+					// already supplied — that's the documented fast path. The
+					// realpath() / filesize() / finfo lookup is memoized per
+					// relative URL across a single render so N items sharing one
+					// enclosure (e.g. shared cover art) don't trigger N stat
+					// calls — previously every item ran the full probe.
+					if (
+						(!isset($val['length']) || !isset($val['type']))
+						&& !str_contains($val['url'], '://')
+					) {
+						$probe = $this->_resolveEnclosure($val['url']);
+						if ($probe !== null) {
+							$val['length'] = $val['length'] ?? $probe['length'];
+							if (!isset($val['type']) && $probe['type'] !== null) {
+								$val['type'] = $probe['type'];
 							}
 						}
 					}
@@ -385,6 +402,46 @@ class RssView extends SerializedView {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Resolve and stat a relative enclosure URL under WWW_ROOT, with memoization.
+	 *
+	 * Returns the file size (as the RSS `length` attribute expects) and the
+	 * detected MIME type, or null when the URL does not point at a real file
+	 * inside the document root. The path-containment check (`strpos($realpath,
+	 * $wwwRealPath) === 0`) guards against `../` traversal.
+	 *
+	 * Callers must already have decided that one of length / type is missing —
+	 * the cache exists purely to fold N items pointing at the same enclosure
+	 * (e.g. a shared cover image) into a single disk probe.
+	 *
+	 * @param string $relativeUrl Relative URL under WWW_ROOT.
+	 * @return array{length: string, type: string|null}|null
+	 */
+	protected function _resolveEnclosure(string $relativeUrl): ?array {
+		if (array_key_exists($relativeUrl, $this->_enclosureCache)) {
+			return $this->_enclosureCache[$relativeUrl];
+		}
+
+		$realpath = realpath(WWW_ROOT . $relativeUrl);
+		$wwwRealPath = realpath(WWW_ROOT);
+		if (!$realpath || !$wwwRealPath || strpos($realpath, $wwwRealPath) !== 0 || !is_file($realpath)) {
+			return $this->_enclosureCache[$relativeUrl] = null;
+		}
+
+		$type = null;
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		if ($finfo) {
+			$detected = finfo_file($finfo, $realpath);
+			$type = $detected !== false ? $detected : null;
+			finfo_close($finfo);
+		}
+
+		return $this->_enclosureCache[$relativeUrl] = [
+			'length' => sprintf('%u', filesize($realpath)),
+			'type' => $type,
+		];
 	}
 
 }

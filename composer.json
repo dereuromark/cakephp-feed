@@ -8,8 +8,7 @@
 		"plugin",
 		"view",
 		"rss",
-		"feed",
-		"atom"
+		"feed"
 	],
 	"authors": [
 		{
