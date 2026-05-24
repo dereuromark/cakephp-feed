@@ -91,7 +91,7 @@ class RssViewTest extends TestCase {
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -119,7 +119,7 @@ class RssViewTest extends TestCase {
 </rss>
 
 RSS;
-		assert($Response !== null);
+		assert($Response instanceof \Cake\Http\Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -161,7 +161,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$time = date('r', $time);
@@ -191,7 +191,7 @@ RSS;
 </rss>
 
 RSS;
-		assert($Response !== null);
+		assert($Response instanceof \Cake\Http\Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -214,7 +214,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 
 		$this->expectException(RuntimeException::class);
 
@@ -248,7 +248,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -273,7 +273,7 @@ RSS;
 </rss>
 
 RSS;
-		assert($Response !== null);
+		assert($Response instanceof \Cake\Http\Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -318,7 +318,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -376,7 +376,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -424,7 +424,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -488,7 +488,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -549,7 +549,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -611,7 +611,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$this->assertStringNotContainsString('<enclosure', $result);
@@ -743,7 +743,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$this->assertStringContainsString('<category>0</category>', $result);
@@ -779,7 +779,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -827,7 +827,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -888,7 +888,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS
@@ -939,7 +939,7 @@ RSS;
 		$viewVars = ['channel' => $data];
 		$View = new RssView($Request, $Response, null, ['viewVars' => $viewVars]);
 		$serialize = 'channel';
-		$View->setConfig(compact('serialize'));
+		$View->setConfig(['serialize' => $serialize]);
 		$result = $View->render('');
 
 		$expected = <<<RSS

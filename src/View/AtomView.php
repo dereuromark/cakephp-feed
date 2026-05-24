@@ -150,7 +150,7 @@ class AtomView extends SerializedView {
 
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response !== null) {
+		if ($response instanceof \Cake\Http\Response) {
 			$response = $response->withType('atom');
 		}
 	}
@@ -416,7 +416,7 @@ class AtomView extends SerializedView {
 			return [$this->_oneLink($links)];
 		}
 		if (is_array($links) && array_is_list($links)) {
-			return array_map(fn ($l) => $this->_oneLink($l), $links);
+			return array_map($this->_oneLink(...), $links);
 		}
 
 		return [$this->_oneLink($links)];
@@ -470,7 +470,7 @@ class AtomView extends SerializedView {
 			return [$this->_onePerson($persons)];
 		}
 		if (is_array($persons) && array_is_list($persons)) {
-			return array_map(fn ($p) => $this->_onePerson($p), $persons);
+			return array_map($this->_onePerson(...), $persons);
 		}
 
 		return [$this->_onePerson($persons)];

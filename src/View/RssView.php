@@ -113,7 +113,7 @@ class RssView extends SerializedView {
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response !== null) {
+		if ($response instanceof \Cake\Http\Response) {
 			$response = $response->withType('rss');
 		}
 	}
@@ -156,9 +156,7 @@ class RssView extends SerializedView {
 			$channel['description'] = '';
 		}
 
-		$channel = $this->_prepareOutput($channel);
-
-		return $channel;
+		return $this->_prepareOutput($channel);
 	}
 
 	/**
@@ -240,9 +238,8 @@ class RssView extends SerializedView {
 		if ($output === false) {
 			return '';
 		}
-		$output = $this->_replaceCdata($output);
 
-		return $output;
+		return $this->_replaceCdata($output);
 	}
 
 	/**
@@ -256,8 +253,8 @@ class RssView extends SerializedView {
 			$bareKey = (string)$key;
 
 			// Detect namespaces
-			if (str_contains($key, ':')) {
-				[$prefix, $bareKey] = explode(':', $key, 2);
+			if (str_contains((string) $key, ':')) {
+				[$prefix, $bareKey] = explode(':', (string) $key, 2);
 				if (str_contains($prefix, '@')) {
 					$prefix = substr($prefix, 1);
 				}
@@ -354,7 +351,7 @@ class RssView extends SerializedView {
 					) {
 						$probe = $this->_resolveEnclosure($val['url']);
 						if ($probe !== null) {
-							$val['length'] = $val['length'] ?? $probe['length'];
+							$val['length'] ??= $probe['length'];
 							if (!isset($val['type']) && $probe['type'] !== null) {
 								$val['type'] = $probe['type'];
 							}
@@ -426,7 +423,7 @@ class RssView extends SerializedView {
 
 		$realpath = realpath(WWW_ROOT . $relativeUrl);
 		$wwwRealPath = realpath(WWW_ROOT);
-		if (!$realpath || !$wwwRealPath || strpos($realpath, $wwwRealPath) !== 0 || !is_file($realpath)) {
+		if (!$realpath || !$wwwRealPath || !str_starts_with($realpath, $wwwRealPath) || !is_file($realpath)) {
 			return $this->_enclosureCache[$relativeUrl] = null;
 		}
 
