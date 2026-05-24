@@ -119,7 +119,7 @@ class RssViewTest extends TestCase {
 </rss>
 
 RSS;
-		assert($Response instanceof \Cake\Http\Response);
+		assert($Response instanceof Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -191,7 +191,7 @@ RSS;
 </rss>
 
 RSS;
-		assert($Response instanceof \Cake\Http\Response);
+		assert($Response instanceof Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}
@@ -273,7 +273,7 @@ RSS;
 </rss>
 
 RSS;
-		assert($Response instanceof \Cake\Http\Response);
+		assert($Response instanceof Response);
 		$this->assertSame('application/rss+xml', $Response->getType());
 		$this->assertTextEquals($expected, $result);
 	}

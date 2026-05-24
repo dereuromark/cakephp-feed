@@ -113,7 +113,7 @@ class RssView extends SerializedView {
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response instanceof \Cake\Http\Response) {
+		if ($response instanceof Response) {
 			$response = $response->withType('rss');
 		}
 	}
@@ -253,8 +253,8 @@ class RssView extends SerializedView {
 			$bareKey = (string)$key;
 
 			// Detect namespaces
-			if (str_contains((string) $key, ':')) {
-				[$prefix, $bareKey] = explode(':', (string) $key, 2);
+			if (str_contains((string)$key, ':')) {
+				[$prefix, $bareKey] = explode(':', (string)$key, 2);
 				if (str_contains($prefix, '@')) {
 					$prefix = substr($prefix, 1);
 				}

@@ -150,7 +150,7 @@ class AtomView extends SerializedView {
 
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		if ($response instanceof \Cake\Http\Response) {
+		if ($response instanceof Response) {
 			$response = $response->withType('atom');
 		}
 	}
