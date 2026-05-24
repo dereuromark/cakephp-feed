@@ -423,6 +423,9 @@ class RssView extends SerializedView {
 
 		$realpath = realpath(WWW_ROOT . $relativeUrl);
 		$wwwRealPath = realpath(WWW_ROOT);
+		if ($wwwRealPath) {
+			$wwwRealPath = rtrim($wwwRealPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		}
 		if (!$realpath || !$wwwRealPath || !str_starts_with($realpath, $wwwRealPath) || !is_file($realpath)) {
 			return $this->_enclosureCache[$relativeUrl] = null;
 		}
