@@ -406,8 +406,9 @@ class RssView extends SerializedView {
 	 *
 	 * Returns the file size (as the RSS `length` attribute expects) and the
 	 * detected MIME type, or null when the URL does not point at a real file
-	 * inside the document root. The path-containment check (`strpos($realpath,
-	 * $wwwRealPath) === 0`) guards against `../` traversal.
+	 * inside the document root. The path-containment check uses
+	 * `str_starts_with($realpath, $wwwRealPath)` on a normalized root path to
+	 * guard against `../` traversal.
 	 *
 	 * Callers must already have decided that one of length / type is missing —
 	 * the cache exists purely to fold N items pointing at the same enclosure
