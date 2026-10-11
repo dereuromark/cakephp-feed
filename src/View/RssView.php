@@ -11,33 +11,14 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 use Cake\View\SerializedView;
+use DateTimeInterface;
 use RuntimeException;
 
 /**
- * A view class that is used for creating RSS feeds.
+ * Serializes a feed array to RSS 2.0 XML.
  *
- * By setting the '_serialize' key in your controller, you can specify a view variable
- * that should be serialized to XML and used as the response for the request.
- * This allows you to omit views + layouts, if your just need to emit a single view
- * variable as the XML response.
- *
- * In your controller, you could do the following:
- *
- * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
- *
- * When the view is rendered, the `$posts` view variable will be serialized
- * into the RSS XML.
- *
- * **Note** The view variable you specify must be compatible with Xml::fromArray().
- *
- * If you don't use the `_serialize` key, you will need a view. You can use extended
- * views to provide layout like functionality. This is currently not yet tested/supported.
- *
- * Usage see docs.
- *
- * @author Mark Scherer
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
- * @link https://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp
+ * Set the view builder's `serialize` option to the feed variable name.
+ * The input contains `channel` metadata and an `items` list.
  */
 class RssView extends SerializedView {
 
@@ -163,10 +144,13 @@ class RssView extends SerializedView {
 	 * Converts a time in any format to an RSS time
 	 *
 	 * @see \Cake\I18n\DateTime::toRssString()
-	 * @param \Cake\I18n\DateTime|string|int $time
+	 * @param \DateTimeInterface|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
-	public function time(DateTime|string|int $time): string {
+	public function time(DateTimeInterface|string|int $time): string {
+		if ($time instanceof DateTimeInterface) {
+			return $time->format(DateTimeInterface::RSS);
+		}
 		$time = new DateTime($time);
 
 		return $time->toRssString();
@@ -394,7 +378,7 @@ class RssView extends SerializedView {
 	 */
 	protected function _replaceCdata(string $content): string {
 		foreach ($this->_cdata as $n => $data) {
-			$data = '<![CDATA[' . $data . ']]>';
+			$data = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 			$content = str_replace('###CDATA-' . $n . '###', $data, $content);
 		}
 
@@ -436,7 +420,6 @@ class RssView extends SerializedView {
 		if ($finfo) {
 			$detected = finfo_file($finfo, $realpath);
 			$type = $detected !== false ? $detected : null;
-			finfo_close($finfo);
 		}
 
 		return $this->_enclosureCache[$relativeUrl] = [

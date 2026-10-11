@@ -550,4 +550,13 @@ class AtomViewTest extends TestCase {
 		return $View;
 	}
 
+	public function testHtmlTitleUsesTheTextConstructSerializer(): void {
+		$body = '<b>Text ]]> more</b>';
+		$view = $this->buildView(['feed' => ['id' => 'https://example.org/feed', 'title' => ['@type' => 'html', '@' => $body], 'updated' => '2026-05-11T12:00:00Z']]);
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertSame($body, (string)$xml->title);
+		$this->assertSame('html', (string)$xml->title['type']);
+	}
+
 }

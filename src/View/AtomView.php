@@ -22,7 +22,7 @@ use RuntimeException;
  * Atom is the stricter, better-specified successor to RSS 2.0 — preferred for
  * anything that isn't a podcast (which still requires RSS for tooling support).
  * Per-entry it supports multiple `<link>` with explicit `@rel`, structured
- * `<author>` with `<name>/<email>/<uri>`, typed `<content type="text|html|xhtml">`,
+ * `<author>` with `<name>/<email>/<uri>`, typed `<content type="text|html">`,
  * separate `<published>` vs `<updated>`, RFC-3339 dates, and mandatory `<id>`.
  *
  * Setup mirrors RssView. By setting the `serialize` view option to a viewVar
@@ -68,8 +68,7 @@ use RuntimeException;
  * Plain-string bodies for text constructs (`title`, `summary`, `content`,
  * `subtitle`, `rights`) are always treated as `type="text"` and XML-escaped.
  * To emit `type="html"` with a CDATA-wrapped body, use the array form with
- * `@type` and `@` keys. `type="xhtml"` is rejected; pre-build the XHTML
- * subtree at the application layer if you need it.
+ * `@type` and `@` keys. `type="xhtml"` is not supported.
  *
  * For full attribute control wrap any field in an array with `@`-prefixed keys
  * for attributes and `@` for the text content, exactly like RssView:
@@ -278,7 +277,7 @@ class AtomView extends SerializedView {
 
 		foreach (['id', 'title'] as $k) {
 			if (isset($data[$k])) {
-				$out[$k] = $data[$k];
+				$out[$k] = $k === 'title' ? $this->_prepareText($data[$k]) : $data[$k];
 				unset($data[$k]);
 			}
 		}
@@ -339,7 +338,7 @@ class AtomView extends SerializedView {
 
 		foreach (['id', 'title'] as $k) {
 			if (isset($entry[$k])) {
-				$out[$k] = $entry[$k];
+				$out[$k] = $k === 'title' ? $this->_prepareText($entry[$k]) : $entry[$k];
 				unset($entry[$k]);
 			}
 		}

@@ -1,0 +1,16 @@
+:root {
+  --vp-c-brand-1: #9a3412;
+  --vp-c-brand-2: #ea580c;
+  --vp-c-brand-3: #9a3412;
+  --vp-c-brand-soft: rgba(234, 88, 12, 0.14);
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #9a3412, #0f766e);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, #ea580c, #2dd4bf);
+  --vp-home-hero-image-filter: blur(48px);
+}
+.dark {
+  --vp-c-brand-1: #fdba74;
+  --vp-c-brand-2: #fed7aa;
+  --vp-c-brand-3: #9a3412;
+}
+.vp-doc :not(pre) > code { overflow-wrap: anywhere; }

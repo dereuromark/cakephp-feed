@@ -15,6 +15,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
 use Feed\View\RssView;
 use RuntimeException;
 
@@ -963,6 +964,20 @@ RSS;
 
 RSS;
 		$this->assertTextEquals($expected, $result);
+	}
+
+	public function testEncodedContentWithCdataTerminatorRemainsValidXml(): void {
+		$body = '<p>Text ]]> more</p>';
+		$view = new RssView(viewOptions: ['viewVars' => ['feed' => ['channel' => ['title' => 'News'], 'items' => [['content:encoded' => $body]]]]]);
+		$view->setConfig('serialize', 'feed');
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertSame($body, (string)$xml->channel->item->children('http://purl.org/rss/1.0/modules/content/')->encoded);
+	}
+
+	public function testTimeAcceptsNativeImmutableDates(): void {
+		$date = new DateTimeImmutable('2026-05-11T12:00:00+00:00');
+		$this->assertSame('Mon, 11 May 2026 12:00:00 +0000', $this->Rss->time($date));
 	}
 
 }
