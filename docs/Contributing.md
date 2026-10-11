@@ -1,26 +1,15 @@
 # Contributing
 
-## Getting Started
+Create a branch for your change and add regression coverage for fixes. Use the repository's Composer commands:
 
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* Fork the repository on GitHub.
+```bash
+composer install
+composer test
+composer cs-check
+composer stan-setup
+composer stan
+```
 
-## Making Changes
+`stan-setup` installs PHPStan locally while preserving `composer.json`. Static analysis checks both source and tests. The coding standard is PSR-2-R, configured by the repository's PHPCS file.
 
-I am looking forward to your contributions. There are several ways to help out:
-* Write missing testcases
-* Write patches for bugs/features, preferably with testcases included
-
-There are a few guidelines that I need contributors to follow:
-* Coding standards (see link below)
-* Passing tests (you can enable travis to assert your changes pass) for Windows and Unix
-
-Protip: Use my [MyCakePHP](https://github.com/dereuromark/cakephp-codesniffer/tree/master/Vendor/PHP/CodeSniffer/Standards/MyCakePHP) sniffs to
-assert coding standards are met. You can either use this pre-build repo and the convenience shell command `cake CodeSniffer.CodeSniffer run -p Tools --standard=MyCakePHP` or the manual `phpcs --standard=MyCakePHP /path/to/Tools`.
-
-# Additional Resources
-
-* [Coding standards guide (extending/overwriting the CakePHP ones)](https://github.com/php-fig-rectified/fig-rectified-standards/)
-* [CakePHP coding standards](https://book.cakephp.org/5/en/contributing/cakephp-coding-conventions.html)
-* [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
+For website changes, run `npm ci`, `npm run docs:build`, and `npm audit` in `docs/`. Keep examples consistent with the source and check the rendered pages before opening a pull request. CI validates the PHP version matrix, coding standards, static analysis, and documentation.

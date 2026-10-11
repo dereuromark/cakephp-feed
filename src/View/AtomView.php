@@ -2,6 +2,7 @@
 
 namespace Feed\View;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
@@ -22,7 +23,7 @@ use RuntimeException;
  * Atom is the stricter, better-specified successor to RSS 2.0 — preferred for
  * anything that isn't a podcast (which still requires RSS for tooling support).
  * Per-entry it supports multiple `<link>` with explicit `@rel`, structured
- * `<author>` with `<name>/<email>/<uri>`, typed `<content type="text|html|xhtml">`,
+ * `<author>` with `<name>/<email>/<uri>`, typed `<content type="text|html">`,
  * separate `<published>` vs `<updated>`, RFC-3339 dates, and mandatory `<id>`.
  *
  * Setup mirrors RssView. By setting the `serialize` view option to a viewVar
@@ -68,8 +69,7 @@ use RuntimeException;
  * Plain-string bodies for text constructs (`title`, `summary`, `content`,
  * `subtitle`, `rights`) are always treated as `type="text"` and XML-escaped.
  * To emit `type="html"` with a CDATA-wrapped body, use the array form with
- * `@type` and `@` keys. `type="xhtml"` is rejected; pre-build the XHTML
- * subtree at the application layer if you need it.
+ * `@type` and `@` keys. `type="xhtml"` is not supported.
  *
  * For full attribute control wrap any field in an array with `@`-prefixed keys
  * for attributes and `@` for the text content, exactly like RssView:
@@ -126,6 +126,11 @@ class AtomView extends SerializedView {
 	protected array $_cdata = [];
 
 	/**
+	 * @var string
+	 */
+	protected string $_cdataPrefix = '';
+
+	/**
 	 * @param \Cake\Http\ServerRequest|null $request
 	 * @param \Cake\Http\Response|null $response
 	 * @param \Cake\Event\EventManager|null $eventManager
@@ -177,10 +182,13 @@ class AtomView extends SerializedView {
 	 * Normalize any date-ish input to an RFC 3339 string. Atom dates are
 	 * RFC 3339 — never RFC 822 like RSS.
 	 *
-	 * @param \DateTimeInterface|string|int $time
+	 * @param \DateTimeInterface|\Cake\Chronos\ChronosDate|string|int $time
 	 * @return string
 	 */
-	public function time(DateTimeInterface|string|int $time): string {
+	public function time(DateTimeInterface|ChronosDate|string|int $time): string {
+		if ($time instanceof ChronosDate) {
+			$time = $time->toDateTimeImmutable();
+		}
 		if ($time instanceof DateTimeInterface) {
 			return $time->format(DateTimeInterface::ATOM);
 		}
@@ -199,6 +207,9 @@ class AtomView extends SerializedView {
      * @return string
 	 */
 	protected function _serialize(array|string $serialize): string {
+		$this->_cdata = [];
+		$this->_usedNamespaces = [];
+		$this->_cdataPrefix = bin2hex(random_bytes(16));
 		if (is_array($serialize)) {
 			$data = [];
 			foreach ($serialize as $alias => $key) {
@@ -278,7 +289,7 @@ class AtomView extends SerializedView {
 
 		foreach (['id', 'title'] as $k) {
 			if (isset($data[$k])) {
-				$out[$k] = $data[$k];
+				$out[$k] = $k === 'title' ? $this->_prepareText($data[$k]) : $data[$k];
 				unset($data[$k]);
 			}
 		}
@@ -321,6 +332,9 @@ class AtomView extends SerializedView {
 		// custom elements) is carried through verbatim. Tracks the prefix
 		// so the matching `xmlns:foo` decl gets emitted at the root.
 		foreach ($data as $k => $v) {
+			if ($v === null) {
+				continue;
+			}
 			$this->_trackNamespace($k);
 			$out[$k] = $v;
 		}
@@ -339,7 +353,7 @@ class AtomView extends SerializedView {
 
 		foreach (['id', 'title'] as $k) {
 			if (isset($entry[$k])) {
-				$out[$k] = $entry[$k];
+				$out[$k] = $k === 'title' ? $this->_prepareText($entry[$k]) : $entry[$k];
 				unset($entry[$k]);
 			}
 		}
@@ -385,6 +399,9 @@ class AtomView extends SerializedView {
 		}
 
 		foreach ($entry as $k => $v) {
+			if ($v === null) {
+				continue;
+			}
 			$this->_trackNamespace($k);
 			$out[$k] = $v;
 		}
@@ -585,7 +602,11 @@ class AtomView extends SerializedView {
 		$i = count($this->_cdata);
 		$this->_cdata[$i] = $content;
 
-		return '###CDATA-' . $i . '###';
+		if ($this->_cdataPrefix === '') {
+			$this->_cdataPrefix = bin2hex(random_bytes(16));
+		}
+
+		return 'CDATA-' . $this->_cdataPrefix . '-' . $i;
 	}
 
 	/**
@@ -606,13 +627,12 @@ class AtomView extends SerializedView {
 	 * @return string
 	 */
 	protected function _replaceCdata(string $content): string {
+		$replacements = [];
 		foreach ($this->_cdata as $n => $data) {
-			$safe = str_replace(']]>', ']]]]><![CDATA[>', $data);
-			$wrapped = '<![CDATA[' . $safe . ']]>';
-			$content = str_replace('###CDATA-' . $n . '###', $wrapped, $content);
+			$replacements['CDATA-' . $this->_cdataPrefix . '-' . $n] = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 		}
 
-		return $content;
+		return strtr($content, $replacements);
 	}
 
 	/**

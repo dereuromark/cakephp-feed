@@ -2,6 +2,7 @@
 
 namespace Feed\View;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
@@ -11,33 +12,15 @@ use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 use Cake\View\SerializedView;
+use DateTimeInterface;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * A view class that is used for creating RSS feeds.
+ * Serializes a feed array to RSS 2.0 XML.
  *
- * By setting the '_serialize' key in your controller, you can specify a view variable
- * that should be serialized to XML and used as the response for the request.
- * This allows you to omit views + layouts, if your just need to emit a single view
- * variable as the XML response.
- *
- * In your controller, you could do the following:
- *
- * `$this->set(array('posts' => $posts, '_serialize' => 'posts'));`
- *
- * When the view is rendered, the `$posts` view variable will be serialized
- * into the RSS XML.
- *
- * **Note** The view variable you specify must be compatible with Xml::fromArray().
- *
- * If you don't use the `_serialize` key, you will need a view. You can use extended
- * views to provide layout like functionality. This is currently not yet tested/supported.
- *
- * Usage see docs.
- *
- * @author Mark Scherer
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
- * @link https://www.dereuromark.de/2013/10/03/rss-feeds-in-cakephp
+ * Set the view builder's `serialize` option to the feed variable name.
+ * The input contains `channel` metadata and an `items` list.
  */
 class RssView extends SerializedView {
 
@@ -84,6 +67,11 @@ class RssView extends SerializedView {
 	 * @var array
 	 */
 	protected array $_cdata = [];
+
+	/**
+	 * @var string
+	 */
+	protected string $_cdataPrefix = '';
 
 	/**
 	 * Memoization cache for enclosure stat lookups (per render).
@@ -163,10 +151,16 @@ class RssView extends SerializedView {
 	 * Converts a time in any format to an RSS time
 	 *
 	 * @see \Cake\I18n\DateTime::toRssString()
-	 * @param \Cake\I18n\DateTime|string|int $time
+	 * @param \DateTimeInterface|\Cake\Chronos\ChronosDate|string|int $time
 	 * @return string An RSS-formatted timestamp
 	 */
-	public function time(DateTime|string|int $time): string {
+	public function time(DateTimeInterface|ChronosDate|string|int $time): string {
+		if ($time instanceof ChronosDate) {
+			$time = $time->toDateTimeImmutable();
+		}
+		if ($time instanceof DateTimeInterface) {
+			return $time->format(DateTimeInterface::RSS);
+		}
 		$time = new DateTime($time);
 
 		return $time->toRssString();
@@ -180,6 +174,9 @@ class RssView extends SerializedView {
 	 * @return string The serialized data
 	 */
 	protected function _serialize(array|string $serialize): string {
+		$this->_cdata = [];
+		$this->_usedNamespaces = [];
+		$this->_cdataPrefix = bin2hex(random_bytes(16));
 		$rootNode = $this->viewVars['_rootNode'] ?? 'channel';
 
 		if (is_array($serialize)) {
@@ -249,7 +246,13 @@ class RssView extends SerializedView {
 	protected function _prepareOutput(array $item): array {
 		foreach ($item as $key => $val) {
 			$prefix = null;
-			// The cast prevents a PHP bug for switch case and false positives with integers
+			$bareKey = substr((string)$key, (int)strrpos(':' . (string)$key, ':'));
+			if ($val === null || (($val === '' || $val === false) && in_array($bareKey, ['pubDate', 'lastBuildDate'], true))) {
+				unset($item[$key]);
+
+				continue;
+			}
+
 			$bareKey = (string)$key;
 
 			// Detect namespaces
@@ -270,6 +273,7 @@ class RssView extends SerializedView {
 
 					break;
 				case 'pubDate':
+				case 'lastBuildDate':
 					$val = $this->time($val);
 
 					break;
@@ -310,7 +314,20 @@ class RssView extends SerializedView {
 						}
 						$val = $attrib;
 					} elseif (is_array($val) && isset($val['url'])) {
-						if (!isset($val['@isPermalink']) || $val['@isPermalink'] !== 'false') {
+						if (array_key_exists('@isPermalink', $val)) {
+							$val['@isPermaLink'] ??= $val['@isPermalink'];
+							unset($val['@isPermalink']);
+						}
+						if (isset($val['@isPermaLink'])) {
+							$permalink = filter_var($val['@isPermaLink'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+							if ($permalink === null) {
+								throw new InvalidArgumentException('isPermaLink must be a boolean value.');
+							}
+							$val['@isPermaLink'] = $permalink ? 'true' : 'false';
+						} else {
+							unset($val['@isPermaLink']);
+						}
+						if (($val['@isPermaLink'] ?? 'true') === 'true') {
 							$val['url'] = Router::url($val['url'], true);
 						}
 						if ($bareKey === 'guid') {
@@ -385,7 +402,11 @@ class RssView extends SerializedView {
 		$i = count($this->_cdata);
 		$this->_cdata[$i] = $content;
 
-		return '###CDATA-' . $i . '###';
+		if ($this->_cdataPrefix === '') {
+			$this->_cdataPrefix = bin2hex(random_bytes(16));
+		}
+
+		return 'CDATA-' . $this->_cdataPrefix . '-' . $i;
 	}
 
 	/**
@@ -393,12 +414,12 @@ class RssView extends SerializedView {
 	 * @return string
 	 */
 	protected function _replaceCdata(string $content): string {
+		$replacements = [];
 		foreach ($this->_cdata as $n => $data) {
-			$data = '<![CDATA[' . $data . ']]>';
-			$content = str_replace('###CDATA-' . $n . '###', $data, $content);
+			$replacements['CDATA-' . $this->_cdataPrefix . '-' . $n] = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 		}
 
-		return $content;
+		return strtr($content, $replacements);
 	}
 
 	/**
@@ -436,7 +457,6 @@ class RssView extends SerializedView {
 		if ($finfo) {
 			$detected = finfo_file($finfo, $realpath);
 			$type = $detected !== false ? $detected : null;
-			finfo_close($finfo);
 		}
 
 		return $this->_enclosureCache[$relativeUrl] = [

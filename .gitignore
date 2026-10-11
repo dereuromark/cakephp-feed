@@ -5,3 +5,7 @@ composer.lock
 vendor/
 .idea/
 .phpcs.cache
+
+/docs/node_modules/
+/docs/.vitepress/dist/
+/docs/.vitepress/cache/
