@@ -2,7 +2,7 @@
 
 `Feed.Atom` takes feed metadata and an `entries` list. It enforces `id`, `title`, and `updated` on the feed and each entry. Other validation rules in [RFC 4287](https://datatracker.ietf.org/doc/html/rfc4287) remain the application's responsibility, including author inheritance, person names, link attributes, valid identifiers, and required entry content or alternate links.
 
-Use stable absolute identifiers. `updated` represents modification time; `published` is optional publication time. Dates accept `DateTimeInterface`, integer timestamps, and parseable strings and render as RFC 3339 values.
+Use stable absolute identifiers. `updated` represents modification time; `published` is optional publication time. Dates accept `DateTimeInterface` and CakePHP date-only objects, integer timestamps, and parseable strings and render as RFC 3339 values.
 
 ## Text
 

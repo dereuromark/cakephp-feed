@@ -2,6 +2,7 @@
 
 namespace Feed\View;
 
+use Cake\Chronos\ChronosDate;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
@@ -125,6 +126,11 @@ class AtomView extends SerializedView {
 	protected array $_cdata = [];
 
 	/**
+	 * @var string
+	 */
+	protected string $_cdataPrefix = '';
+
+	/**
 	 * @param \Cake\Http\ServerRequest|null $request
 	 * @param \Cake\Http\Response|null $response
 	 * @param \Cake\Event\EventManager|null $eventManager
@@ -176,10 +182,13 @@ class AtomView extends SerializedView {
 	 * Normalize any date-ish input to an RFC 3339 string. Atom dates are
 	 * RFC 3339 — never RFC 822 like RSS.
 	 *
-	 * @param \DateTimeInterface|string|int $time
+	 * @param \DateTimeInterface|\Cake\Chronos\ChronosDate|string|int $time
 	 * @return string
 	 */
-	public function time(DateTimeInterface|string|int $time): string {
+	public function time(DateTimeInterface|ChronosDate|string|int $time): string {
+		if ($time instanceof ChronosDate) {
+			$time = $time->toDateTimeImmutable();
+		}
 		if ($time instanceof DateTimeInterface) {
 			return $time->format(DateTimeInterface::ATOM);
 		}
@@ -198,6 +207,8 @@ class AtomView extends SerializedView {
      * @return string
 	 */
 	protected function _serialize(array|string $serialize): string {
+		$this->_cdata = [];
+		$this->_cdataPrefix = bin2hex(random_bytes(16));
 		if (is_array($serialize)) {
 			$data = [];
 			foreach ($serialize as $alias => $key) {
@@ -584,7 +595,11 @@ class AtomView extends SerializedView {
 		$i = count($this->_cdata);
 		$this->_cdata[$i] = $content;
 
-		return '###CDATA-' . $i . '###';
+		if ($this->_cdataPrefix === '') {
+			$this->_cdataPrefix = bin2hex(random_bytes(16));
+		}
+
+		return 'CDATA-' . $this->_cdataPrefix . '-' . $i;
 	}
 
 	/**
@@ -605,13 +620,12 @@ class AtomView extends SerializedView {
 	 * @return string
 	 */
 	protected function _replaceCdata(string $content): string {
+		$replacements = [];
 		foreach ($this->_cdata as $n => $data) {
-			$safe = str_replace(']]>', ']]]]><![CDATA[>', $data);
-			$wrapped = '<![CDATA[' . $safe . ']]>';
-			$content = str_replace('###CDATA-' . $n . '###', $wrapped, $content);
+			$replacements['CDATA-' . $this->_cdataPrefix . '-' . $n] = '<![CDATA[' . str_replace(']]>', ']]]]><![CDATA[>', $data) . ']]>';
 		}
 
-		return $content;
+		return strtr($content, $replacements);
 	}
 
 	/**

@@ -12,6 +12,7 @@ namespace Feed\Test\TestCase\View;
 
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -951,10 +952,10 @@ RSS;
     <link>http://example.org/</link>
     <description/>
     <item>
-      <guid isPermalink="false">/testing</guid>
+      <guid isPermaLink="false">/testing</guid>
     </item>
     <item>
-      <guid isPermalink="true">http://example.org/test-me</guid>
+      <guid isPermaLink="true">http://example.org/test-me</guid>
     </item>
     <item>
       <guid>http://example.org/test-me-too</guid>
@@ -978,6 +979,54 @@ RSS;
 	public function testTimeAcceptsNativeImmutableDates(): void {
 		$date = new DateTimeImmutable('2026-05-11T12:00:00+00:00');
 		$this->assertSame('Mon, 11 May 2026 12:00:00 +0000', $this->Rss->time($date));
+	}
+
+	public function testLiteralCdataSentinelsRoundTrip(): void {
+		$body = '<p>###CDATA-1### ]]> content</p>';
+		$view = new RssView(viewOptions: [
+			'viewVars' => [
+				'feed' => [
+					'channel' => ['title' => '###CDATA-0###'],
+					'items' => [['content:encoded' => $body], ['content:encoded' => 'second']],
+				],
+			],
+		]);
+		$view->setConfig('serialize', 'feed');
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertSame('###CDATA-0###', (string)$xml->channel->title);
+		$this->assertSame($body, (string)$xml->channel->item[0]->children('http://purl.org/rss/1.0/modules/content/')->encoded);
+		$this->assertSame('second', (string)$xml->channel->item[1]->children('http://purl.org/rss/1.0/modules/content/')->encoded);
+	}
+
+	public function testOpaqueGuidAndLastBuildDate(): void {
+		$view = new RssView(viewOptions: [
+			'viewVars' => [
+				'feed' => [
+					'channel' => ['title' => 'News', 'lastBuildDate' => new DateTimeImmutable('2026-05-11T12:00:00Z')],
+					'items' => [['guid' => ['url' => 'urn:uuid:1234', '@isPermaLink' => 'false'], 'pubDate' => null, 'content:encoded' => null]],
+				],
+			],
+		]);
+		$view->setConfig('serialize', 'feed');
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertSame('urn:uuid:1234', (string)$xml->channel->item->guid);
+		$this->assertSame('false', (string)$xml->channel->item->guid['isPermaLink']);
+		$this->assertSame('Mon, 11 May 2026 12:00:00 +0000', (string)$xml->channel->lastBuildDate);
+		$this->assertFalse(isset($xml->channel->item->pubDate));
+		$this->assertFalse(isset($xml->channel->item->children('http://purl.org/rss/1.0/modules/content/')->encoded));
+	}
+
+	public function testDateOnlyObjectsIgnoreLocalizedDisplay(): void {
+		$date = new Date('2026-05-11');
+		Date::setToStringFormat('dd.MM.yy');
+		try {
+			$this->assertSame('11.05.26', (string)$date);
+			$this->assertStringStartsWith('Mon, 11 May 2026 00:00:00 ', $this->Rss->time($date));
+		} finally {
+			Date::resetToStringFormat();
+		}
 	}
 
 }

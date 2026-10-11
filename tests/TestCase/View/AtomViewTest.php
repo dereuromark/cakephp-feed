@@ -13,6 +13,7 @@ namespace Feed\Test\TestCase\View;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Date;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -557,6 +558,37 @@ class AtomViewTest extends TestCase {
 		$this->assertNotFalse($xml);
 		$this->assertSame($body, (string)$xml->title);
 		$this->assertSame('html', (string)$xml->title['type']);
+	}
+
+	public function testLiteralCdataSentinelsRoundTrip(): void {
+		$body = '<p>###CDATA-1### ]]> content</p>';
+		$view = $this->buildView([
+			'feed' => [
+				'id' => 'https://example.org/feed',
+				'title' => '###CDATA-0###',
+				'updated' => '2026-05-11T12:00:00Z',
+				'entry' => [
+					['id' => 'https://example.org/one', 'title' => 'One', 'updated' => '2026-05-11T12:00:00Z', 'content' => ['@type' => 'html', '@' => $body]],
+					['id' => 'https://example.org/two', 'title' => 'Two', 'updated' => '2026-05-11T12:00:00Z', 'content' => ['@type' => 'html', '@' => 'second']],
+				],
+			],
+		]);
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertSame('###CDATA-0###', (string)$xml->title);
+		$this->assertSame($body, (string)$xml->entry[0]->content);
+		$this->assertSame('second', (string)$xml->entry[1]->content);
+	}
+
+	public function testDateOnlyObjectsIgnoreLocalizedDisplay(): void {
+		$date = new Date('2026-05-11');
+		Date::setToStringFormat('dd.MM.yy');
+		try {
+			$this->assertSame('11.05.26', (string)$date);
+			$this->assertStringStartsWith('2026-05-11T00:00:00', $this->Atom->time($date));
+		} finally {
+			Date::resetToStringFormat();
+		}
 	}
 
 }
