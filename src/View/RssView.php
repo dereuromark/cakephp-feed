@@ -13,6 +13,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 use Cake\View\SerializedView;
 use DateTimeInterface;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -174,6 +175,7 @@ class RssView extends SerializedView {
 	 */
 	protected function _serialize(array|string $serialize): string {
 		$this->_cdata = [];
+		$this->_usedNamespaces = [];
 		$this->_cdataPrefix = bin2hex(random_bytes(16));
 		$rootNode = $this->viewVars['_rootNode'] ?? 'channel';
 
@@ -244,7 +246,13 @@ class RssView extends SerializedView {
 	protected function _prepareOutput(array $item): array {
 		foreach ($item as $key => $val) {
 			$prefix = null;
-			// The cast prevents a PHP bug for switch case and false positives with integers
+			$bareKey = substr((string)$key, (int)strrpos(':' . (string)$key, ':'));
+			if ($val === null || (($val === '' || $val === false) && in_array($bareKey, ['pubDate', 'lastBuildDate'], true))) {
+				unset($item[$key]);
+
+				continue;
+			}
+
 			$bareKey = (string)$key;
 
 			// Detect namespaces
@@ -261,21 +269,11 @@ class RssView extends SerializedView {
 			$attrib = [];
 			switch ($bareKey) {
 				case 'encoded':
-					if ($val === null) {
-						unset($item[$key]);
-
-						continue 2;
-					}
 					$val = $this->_newCdata($val);
 
 					break;
 				case 'pubDate':
 				case 'lastBuildDate':
-					if ($val === null) {
-						unset($item[$key]);
-
-						continue 2;
-					}
 					$val = $this->time($val);
 
 					break;
@@ -320,11 +318,17 @@ class RssView extends SerializedView {
 							$val['@isPermaLink'] ??= $val['@isPermalink'];
 							unset($val['@isPermalink']);
 						}
-						if (($val['@isPermaLink'] ?? 'true') !== 'false' && ($val['@isPermaLink'] ?? true) !== false) {
-							$val['url'] = Router::url($val['url'], true);
+						if (isset($val['@isPermaLink'])) {
+							$permalink = filter_var($val['@isPermaLink'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+							if ($permalink === null) {
+								throw new InvalidArgumentException('isPermaLink must be a boolean value.');
+							}
+							$val['@isPermaLink'] = $permalink ? 'true' : 'false';
+						} else {
+							unset($val['@isPermaLink']);
 						}
-						if (isset($val['@isPermaLink']) && is_bool($val['@isPermaLink'])) {
-							$val['@isPermaLink'] = $val['@isPermaLink'] ? 'true' : 'false';
+						if (($val['@isPermaLink'] ?? 'true') === 'true') {
+							$val['url'] = Router::url($val['url'], true);
 						}
 						if ($bareKey === 'guid') {
 							$val['@'] = $val['url'];

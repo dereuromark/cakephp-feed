@@ -1029,4 +1029,65 @@ RSS;
 		}
 	}
 
+	public function testOptionalValuesAreOmittedBeforeNamespaceTracking(): void {
+		foreach ([null, '', false] as $date) {
+			$view = new RssView(viewOptions: [
+				'viewVars' => [
+					'feed' => [
+						'channel' => ['title' => 'News', 'lastBuildDate' => $date],
+						'items' => [['pubDate' => $date, 'foo:pubDate' => null, 'content:encoded' => null, 'guid' => null, 'link' => null, 'comments' => null, 'source' => null]],
+					],
+				],
+			]);
+			$view->setConfig('serialize', 'feed');
+			$output = $view->render('');
+			$this->assertStringNotContainsString('xmlns:content', $output);
+			$xml = simplexml_load_string($output);
+			$this->assertNotFalse($xml);
+			$this->assertFalse(isset($xml->channel->lastBuildDate));
+			$this->assertCount(0, $xml->channel->item->children());
+		}
+	}
+
+	public function testGuidBooleanInputsAreNormalized(): void {
+		foreach ([false, 0, 'False'] as $flag) {
+			$view = new RssView(viewOptions: [
+				'viewVars' => [
+					'feed' => [
+						'channel' => ['title' => 'News'],
+						'items' => [['guid' => ['url' => 'urn:uuid:1', '@isPermaLink' => $flag]]],
+					],
+				],
+			]);
+			$view->setConfig('serialize', 'feed');
+			$xml = simplexml_load_string($view->render(''));
+			$this->assertNotFalse($xml);
+			$this->assertSame('urn:uuid:1', (string)$xml->channel->item->guid);
+			$this->assertSame('false', (string)$xml->channel->item->guid['isPermaLink']);
+		}
+	}
+
+	public function testNullGuidAttributeUsesDefaultWithoutEmptyAttribute(): void {
+		$view = new RssView(viewOptions: [
+			'viewVars' => [
+				'feed' => [
+					'channel' => ['title' => 'News'],
+					'items' => [
+						['guid' => ['url' => '/one', '@isPermaLink' => null]],
+						['guid' => ['url' => '/two', '@isPermaLink' => true]],
+						['guid' => ['url' => 'urn:uuid:3', '@isPermalink' => false]],
+					],
+				],
+			],
+		]);
+		$view->setConfig('serialize', 'feed');
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertFalse(isset($xml->channel->item[0]->guid['isPermaLink']));
+		$this->assertSame($this->baseUrl . '/one', (string)$xml->channel->item[0]->guid);
+		$this->assertSame('true', (string)$xml->channel->item[1]->guid['isPermaLink']);
+		$this->assertSame('urn:uuid:3', (string)$xml->channel->item[2]->guid);
+		$this->assertSame('false', (string)$xml->channel->item[2]->guid['isPermaLink']);
+	}
+
 }

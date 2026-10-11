@@ -567,7 +567,7 @@ class AtomViewTest extends TestCase {
 				'id' => 'https://example.org/feed',
 				'title' => '###CDATA-0###',
 				'updated' => '2026-05-11T12:00:00Z',
-				'entry' => [
+				'entries' => [
 					['id' => 'https://example.org/one', 'title' => 'One', 'updated' => '2026-05-11T12:00:00Z', 'content' => ['@type' => 'html', '@' => $body]],
 					['id' => 'https://example.org/two', 'title' => 'Two', 'updated' => '2026-05-11T12:00:00Z', 'content' => ['@type' => 'html', '@' => 'second']],
 				],
@@ -589,6 +589,23 @@ class AtomViewTest extends TestCase {
 		} finally {
 			Date::resetToStringFormat();
 		}
+	}
+
+	public function testNullOptionalConstructsAreOmitted(): void {
+		$view = $this->buildView([
+			'feed' => [
+				'id' => 'https://example.org/feed',
+				'title' => 'News',
+				'updated' => '2026-05-11T12:00:00Z',
+				'subtitle' => null,
+				'foo:extension' => null,
+				'entries' => [['id' => 'https://example.org/one', 'title' => 'One', 'updated' => '2026-05-11T12:00:00Z', 'published' => null, 'summary' => null, 'content' => null, 'author' => null, 'link' => null]],
+			],
+		]);
+		$xml = simplexml_load_string($view->render(''));
+		$this->assertNotFalse($xml);
+		$this->assertFalse(isset($xml->subtitle));
+		$this->assertCount(3, $xml->entry->children());
 	}
 
 }

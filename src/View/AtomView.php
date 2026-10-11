@@ -208,6 +208,7 @@ class AtomView extends SerializedView {
 	 */
 	protected function _serialize(array|string $serialize): string {
 		$this->_cdata = [];
+		$this->_usedNamespaces = [];
 		$this->_cdataPrefix = bin2hex(random_bytes(16));
 		if (is_array($serialize)) {
 			$data = [];
@@ -331,6 +332,9 @@ class AtomView extends SerializedView {
 		// custom elements) is carried through verbatim. Tracks the prefix
 		// so the matching `xmlns:foo` decl gets emitted at the root.
 		foreach ($data as $k => $v) {
+			if ($v === null) {
+				continue;
+			}
 			$this->_trackNamespace($k);
 			$out[$k] = $v;
 		}
@@ -395,6 +399,9 @@ class AtomView extends SerializedView {
 		}
 
 		foreach ($entry as $k => $v) {
+			if ($v === null) {
+				continue;
+			}
 			$this->_trackNamespace($k);
 			$out[$k] = $v;
 		}

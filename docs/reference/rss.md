@@ -2,7 +2,7 @@
 
 `Feed.Rss` serializes `channel` metadata and an `items` list. The [RSS 2.0 specification](https://www.rssboard.org/rss-specification) requires channel title, link, and description. Supply meaningful values: the view's empty defaults do not make an incomplete channel valid.
 
-An item needs a title or description. Use a stable `guid`, a canonical link, and a publication date when available. `pubDate` accepts `DateTimeInterface`, integer Unix timestamps, and parseable date strings, and renders in RSS date format. `lastBuildDate` uses the same formatting. CakePHP date-only objects are accepted without parsing their localized display strings. Optional date and encoded-content values may be `null`; those elements are omitted.
+An item needs a title or description. Use a stable `guid`, a canonical link, and a publication date when available. `pubDate` accepts `DateTimeInterface`, integer Unix timestamps, and parseable date strings, and renders in RSS date format. `lastBuildDate` uses the same formatting. CakePHP date-only objects are accepted without parsing their localized display strings. Optional values may be `null`; those elements are omitted. Empty strings and `false` omit RSS dates.
 
 ## Fields and shorthands
 
