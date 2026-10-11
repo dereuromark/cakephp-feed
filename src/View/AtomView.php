@@ -206,7 +206,7 @@ class AtomView extends SerializedView {
      * @throws \RuntimeException When a custom namespace prefix was used without being registered.
      * @return string
 	 */
-	protected function _serialize(array|string $serialize): string {
+	protected function serialize(array|string $serialize): string {
 		$this->_cdata = [];
 		$this->_usedNamespaces = [];
 		$this->_cdataPrefix = bin2hex(random_bytes(16));
