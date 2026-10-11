@@ -173,7 +173,7 @@ class RssView extends SerializedView {
 	 * @throws \RuntimeException When the prefix is not specified
 	 * @return string The serialized data
 	 */
-	protected function _serialize(array|string $serialize): string {
+	protected function serialize(array|string $serialize): string {
 		$this->_cdata = [];
 		$this->_usedNamespaces = [];
 		$this->_cdataPrefix = bin2hex(random_bytes(16));
